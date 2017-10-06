@@ -1,0 +1,49 @@
+- 3;
+val it = 3 : int
+- it + 2;
+val it = 5 : int
+- it - 1;
+val it = 4 : int
+- -2 + 5;
+stdIn:8.1 Error: expression or pattern begins with infix identifier "-"
+stdIn:8.1-8.7 Error: operator and operand don't agree [overload conflict]
+  operator domain: [- ty] * [- ty]
+  operand:         [int ty]
+  in expression:
+    - 2
+- ~2 + 5;
+val it = 3 : int
+- val x = 7;
+val x = 7 : int
+- x - 2;
+val it = 5 : int
+- x / 2;
+stdIn:11.1-11.6 Error: operator and operand don't agree [tycon mismatch]
+  operator domain: real * real
+  operand:         int * [int ty]
+  in expression:
+    x / 2
+- x div 2;
+val it = 3 : int
+- x = 9;
+val it = false : bool
+- x * 1.2;
+stdIn:13.1-13.8 Error: operator and operand don't agree [tycon mismatch]
+  operator domain: int * int
+  operand:         int * real
+  in expression:
+    x * 1.2
+- real x * 1.2
+= ;
+val it = 8.4 : real
+- if x > 8 then "Yes" else "No";
+val it = "No" : string
+- val c = #"a";
+val c = #"a" : char
+- ord c;
+val it = 97 : int
+- val s = "S"
+= ;
+val s = "S" : string
+- s ^ "ML";
+val it = "SML" : string
