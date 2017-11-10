@@ -1,0 +1,118 @@
+1.作成課題 Lower Upper
+
+1.1 実行結果
+
+val upperChar = fn : char list -> char list
+val upper = fn : string -> string
+val lowerChar = fn : char list -> char list
+val lower = fn : string -> string
+val it = () : unit
+- lower "Standard ML of New Jersey, Version 110.0.7";
+val it = "standard ml of new jersey, version 110.0.7" : string
+- upper "Standard ML of New Jersey, Version 110.0.7";
+val it = "STANDARD ML OF NEW JERSEY, VERSION 110.0.7" : string
+
+1.2 考察
+
+lowerCharは文字のリストを与えて大文字を小文字にして返す関数である。
+Char.toLowerを利用して大文字を小文字に変換している。
+
+lowerではexplodeで文字列を文字のリストに変換し、それをlowerCharに与え、それを再び文字列にすることで実現している。
+結果からlowerを利用することで大文字が小文字になっていることが見て取れるので正しくlowerを実装できたと考えられる。
+
+upperCharは文字のリストを与えて大文字を小文字にして返す関数である。
+Char.toUpperを利用して大文字を小文字に変換している。
+
+upperではexplodeで文字列を文字のリストに変換し、それをupperCharに与え、それを再び文字列にすることで実現している。
+結果からupperを利用することで大文字が小文字になっていることが見て取れるので正しくupperを実装できたと考えられる。
+
+2.作成課題 isPrefix
+
+2.1 実行結果
+
+val length = fn : 'a list -> int
+val isPrefix = fn : string -> string -> bool
+val it = () : unit
+- isPrefix "" "abcde";
+val it = true : bool
+- isPrefix "abc" "abcde";
+val it = true : bool
+- isPrefix "abcde" "abcde";
+val it = true : bool
+- isPrefix "bcd" "abcde";
+val it = false : bool
+- isPrefix "abcdefg" "abcde";
+val it = false : bool
+
+2.2 考察
+
+isPrefixはリストの長さを返す関数lengthを利用して実装している。
+まず引数の文字列の長さをxLen, yLenに格納している。
+次にxLenがyLenより長い場合にはfalseを返している。
+そうでない場合にはxとxの長さ分yの先頭から切り取った文字列を比較し、それが一致していればtrueを一致していなければfalseを返している。
+結果から第一引数が先頭部分列となっている場合にtrueとなっていることが見て取れるため、正確に動作していると解る。
+
+3.作成課題 student
+
+3.1 実行結果
+
+type student = {Grade:int, Name:string, School:string, University:string}
+val st1 = {Grade=2,Name="Ichiro",School="Engineering",University="Nagoya"}
+  : {Grade:int, Name:string, School:string, University:string}
+val st2 = {Grade=3,Name="Jiro",School="Science",University="Nagoya"}
+  : {Grade:int, Name:string, School:string, University:string}
+val st3 = {Grade=3,Name="Saburo",School="Engineering",University="Nagoya"}
+  : {Grade:int, Name:string, School:string, University:string}
+val st4 = {Grade=4,Name="Shiro",School="Engineering",University="Tokyo"}
+  : {Grade:int, Name:string, School:string, University:string}
+val st5 = {Grade=2,Name="Goro",School="Science",University="Tokyo"}
+  : {Grade:int, Name:string, School:string, University:string}
+val st6 = {Grade=1,Name="Rokuro",School="Engineering",University="Osaka"}
+  : {Grade:int, Name:string, School:string, University:string}
+val st7 = {Grade=3,Name="Shichiro",School="Engineering",University="Osaka"}
+  : {Grade:int, Name:string, School:string, University:string}
+val getSchool = fn : student -> string
+val lower2 = fn : student -> bool
+val sameUnivGrade = fn : student -> student -> bool
+val it = () : unit
+
+- getSchool st1;
+val it = "Engineering" : string
+
+- lower2 st6;
+val it = true : bool
+- lower2 st1;
+val it = true : bool
+- lower2 st3;
+val it = false : bool
+- lower2 st5;
+val it = true : bool
+- lower2 st4;
+val it = false : bool
+
+- sameUnivGrade st1 st6;
+val it = false : bool
+- sameUnivGrade st1 st2;
+val it = false : bool
+- sameUnivGrade st1 st5;
+val it = false : bool
+- sameUnivGrade st2 st3;
+val it = true : bool
+
+3.2 考察
+
+getSchoolについて
+getSchoolはSchoolを持つStudentを引数として実行する関数である。
+取得したSchoolを返り値とすることで動作を実現している。
+結果からSchoolが取得できていることが分かり、正確に実装できたと分かる。
+
+lower2について
+lower2がGradeを持つStudentを引数として実行する関数である。
+取得したGradeが2以上であるかどうかを<=演算子で比較し、結果を返している。
+結果から学年が2以下であればtrueとなっていることが見て取れ、正確に実装できたとわかる。
+
+sameUnivGradeについて
+sameUnivGradeはStudentを2つ引数として与え、それぞれのUniversityとGradeを利用することで実現している。
+結果はif文を利用して条件を満たせばtrue, そうでなければfalseを返すことで実現している。
+条件文はandalsoを利用することで実現した。
+結果から学年と大学が一致していればtrueが返ってきていることが見て取れ、正確に実装できたとわかる。

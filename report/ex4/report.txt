@@ -1,0 +1,165 @@
+1.説明課題
+
+1.1.結果
+
+- fun f x y z = x (y z) : int;
+val f = fn : ('a -> int) -> ('b -> 'a) -> 'b -> int
+
+- fun g x y z = (x y z) : int;
+val g = fn : ('a -> 'b -> int) -> 'a -> 'b -> int
+
+1.2.考察
+
+まず、fについて考察を行う。
+fun f x y z = x (y z) : int
+
+全体の返り値はintなので
+x (y z) : int となる。
+
+また、y z : 'a とすると
+x : 'a -> int となる。
+
+ここで z : 'b とすると
+y : 'b -> 'a となる。
+
+以上から
+f x y z : int
+f x y : 'b -> int
+f x : ('b -> 'a) -> 'b -> int
+f : ('a -> int) -> ('b -> 'a) -> 'b -> int
+となる。
+
+次に、gについて解説を行う。
+全体の返り値はintなので
+(x y z) : int となる。
+
+また、z : 'b とすると
+x y : 'b -> int
+
+ここで y : 'a とすると
+x : 'a -> 'b -> int
+
+以上から
+f x y z : int
+f x y : 'b -> int
+f x : 'a -> 'b -> int
+f : ('a -> 'b -> int) -> 'a -> 'b -> int
+となる。
+
+2.作成課題
+
+2.1.結果
+
+- use "a.sml";
+[opening a.sml]
+val F = fn : 'a -> ('b -> 'c) -> ('a -> 'b) -> 'c
+val G = fn : 'a -> 'b -> ('a -> 'b -> 'c) -> 'c
+
+2.2.考察
+
+F について
+まず返り値と計算順序から
+x : 'a
+y : 'b -> 'c
+z : 'a -> 'b であると分かる。
+また、返り値が'cであることから最後にyを適用すると分かる。
+yは'bを引数とするのでz xを引数とすればよいと分かる。
+したがって
+fun F x y z = y (z x);
+となった。
+
+Gについて
+まず、返り値と計算順序から
+x : 'a
+y : 'b
+z : 'a -> 'b -> 'c であることが分かる。
+また、返り値が'cであることからzの返り値が関数の返り値だと分かる。
+ここでxを先に与えることでx z : 'b -> 'c となりyを与えればよい関数に変換できると分かる。
+したがってx z にyを与えることで設問の関数を得られる。
+つまり
+fun G x y z = (z x) y;
+
+3.説明課題
+
+3.1.結果
+
+- fn x => x;
+val it = fn : 'a -> 'a
+
+- fn x => fn y => x + y ;
+val it = fn : int -> int -> int
+
+- fn x => fn y => x <= y ;
+val it = fn : int -> int -> bool
+
+- fn x => fn y => (x + 2.0, y + 1) ;
+val it = fn : real -> int -> real * int
+
+- fn x => fn y => fn z => (x y, x "SML", y > z);
+val it = fn : (string -> 'a) -> string -> string -> 'a * 'a * bool
+
+3.2.考察
+
+fn x => x について
+fun f x = x と同義である。
+x : 'a とすると
+f : x -> x である。
+
+fn x => fn y => x + y について
+
+fn y => x + y に関して
+x : 'a とすると
+y : 'a となる。
+このことから x + y : 'a であると分かる。
+したがってfn y => x + y : 'a -> 'a である。
+ただしオペランド"+"のデフォルトはintと定義されているため'a : intとなっている。
+
+fn x => fn y => x + y に関して
+fn y => x + y : int -> int、x : int であることから
+fn x => fn y => x + y : int -> int -> int である。
+
+fn x => fn y => x <= y について
+
+fn y => x <= y に関して
+x : 'a とすると
+y : 'a となる。
+また、x <= y : bool であると分かる。
+したがって、fn y => x <= y : 'a -> boolである。
+ただし、<=のデフォルトはintであるため 'a : int となる。
+
+fn x => fn y => x <= y に関して
+fn y => x <= y : int -> bool、x : intであることから
+fn x => fn y => x <= y : int -> int -> boolである。
+
+fn x => fn y => (x + 2.0, y + 1) について
+
+fn y => (x + 2.0, y + 1)について
+2.0 : real より x : real である。
+1 : int より y : int である。
+したがってfn y => (x + 2.0, y + 1) : int -> real * int である。
+
+fn x => fn y => (x + 2.0, y + 1) に関して
+fn y => (x + 2.0, y + 1) : int -> real * int , x : realであることから
+fn x => fn y => (x + 2.0, y + 1) : real -> int -> real * int
+
+fn x => fn y => fn z => (x y, x "SML", y > z) について
+
+fn z => (x y, x "SML", y > z)に関して
+z : 'a とすると
+y : 'a である。
+x string : 'bとすると。
+x : string -> 'b
+したがってxはstringを引数とする関数である。
+つまり y : string, z : string である。
+また、'b を'aと表記すると
+fn z => (x y, x "SML", y > z) : string -> 'a * 'a * bool と表記できる。
+
+fn y => fn z => (x y, x "SML", y > z)に関して
+fn z => (x y, x "SML", y > z) : string -> 'a * 'a * bool, y : stringより
+fn y => fn z => (x y, x "SML", y > z) : string -> string -> 'a * 'a * bool と表記できる。
+
+fn x => fn y => fn z => (x y, x "SML", y > z) に関して
+fn y => fn z => (x y, x "SML", y > z) : string -> string -> 'a * 'a * bool ,x : string -> 'a より
+
+fn => x fn y => fn z => (x y, x "SML", y > z) :(string -> 'a) -> string -> string -> 'a * 'a * bool と表記できる。
+
