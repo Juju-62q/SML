@@ -1,0 +1,87 @@
+1.作成課題 sumList, member, unique、filter 
+
+1.1 実行結果
+
+[opening List.sml]
+val sumList = fn : int list -> int
+List.sml:6.10 Warning: calling polyEqual
+val member = fn : ''a -> ''a list -> bool
+val unique = fn : ''a list -> ''a list
+val filter = fn : ('a -> bool) -> 'a list -> 'a list
+val it = () : unit
+- sumList [1,2,3,4,5];
+val it = 15 : int
+- sumList [];
+val it = 0 : int
+- member 2 [1,2,3,4,5];
+val it = true : bool
+- member 6 [1,2,3,4,5];
+val it = false : bool
+- unique [1,2,3,2,4,1,2,5];
+val it = [3,4,1,2,5] : int list
+- filter (fn x => (x mod 2) = 0) [1,2,3,4,5];
+val it = [2,4] : int list
+
+1.2 考察
+sumListについて
+リストの要素を1つずつ取得し、sumListを再帰的に呼び出したものと足すようにして実装した。
+なお、リストがからの場合には0が返るようにしている。
+実行結果から1,2,3,4,5の加算結果である15が返り値となっていることが見て取れるため、適切に処理ができていることが分かる。
+
+memberについて
+リストから要素を1つずつ取得し、keyとリストから取得した値が一致した場合にtrueを返している。
+一致しなかった場合には再帰的にmemberを呼び出すようにした。なお、与えられたリストが空だった場合にはfalseがかえるように記述している。
+結果を見るとkeyがリストに含まれる場合にはtrueを、そうでない場合にはfalseが返ってきており、適切に処理ができていることが分かる。
+
+uniqueについて
+リストから要素を1つずつ取得し(xとする)、それがx以外の要素からなるリストのメンバーであるかどうかで場合分けを行っている。
+xがx以外からなるリストのメンバーであった場合にはxを以外のリストにxと同じ値の要素が存在するため結果にはxを含めない。
+そうでない場合にはxはユニークな値であるため結果にxを含めている。
+なお、どちらの場合にも再帰的に処理を進めている。
+この操作では先頭を取り出し、後ろに同じ値の要素が存在するかどうかを確認するため、後ろの要素が結果のリストに残るようになっている。
+結果を見ると、同じ値がリストに存在する場合にはその数字の要素の数が1つになっている。また、後ろの要素が残るような順番になっていることが分かる。
+したがって適切に処理ができていると分かる。
+
+filterについて
+filterはリストから要素を1つずつ取得し、それを第一引数の関数に与え素の結果に応じて分岐を行うことで実現している。
+なお、条件を満たす場合にはリストに要素を追加し、満たさない場合にはリストに要素を追加していない。どちらの場合にも再帰的に関数を呼び出している。
+結果を見ると本実験で与えた2の倍数であるという関数に対して2の倍数の要素だけがリストに残っていることがわかる。したがって適切に処理ができていると分かる。
+
+2.作成課題 absList, abbreviate
+
+2.1 実行結果
+
+[opening list_ad.sml]
+val absList = fn : int list -> int list
+[autoloading]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+val isNum = fn : char -> bool
+val getUpperOrNumFromList = fn : char list -> char list
+val abbreviate = fn : string -> string
+val it = () : unit
+- absList  [1, ~2, 3, 4, ~5, ~6];
+val it = [1,2,3,4,5,6] : int list
+- abbreviate "Nagoya University";
+val it = "NU" : string
+- abbreviate "National Aeronautics and Space Administration";
+val it = "NASA" : string
+- abbreviate "Standard ML of New Jersey, version 110";
+val it = "SMLNJ110" : string
+
+2.2 考察
+absListについて
+リストから要素を1つずつ取り出し、それが0未満かどうかで条件分岐を行っている。
+0未満であれば値を正の値に変換し、リストに加えている。
+0以上であればそのままリストに加えている。
+どちらの場合でも再帰的に関数を呼び出している。
+結果を見ると負の値がそれぞれ正の値となっている(絶対値が取得できている)と言うことが見て取れる。したがって適切に処理ができていることが分かる。
+
+abbreviateについて
+abbreviateを作成するに当たって2つの関数を定義している。
+1つはCharで与えられた引数が数字かどうか判断するisNum。
+もう1つはCharのリストから大文字と数字のみをリストの要素として残して返す関数getUpperOrNumFromListである。
+getUpperOrNumFromListはリストから要素を1つずつ取得し、これが数字か大文字であった場合に返り値に要素を追加し、そうでない場合には返り値に要素を追加しないと言う方法で実現している。なお、どちらの場合にも再帰的に処理を行っている。
+これらの関数を利用し、stringをCharのリストに展開、getUpperOrNumFromListを適用して大文字、数字のみのリストに変換。これをStringとして接続することで処理を実現している。
+結果を見ると大文字及び数字のみが取得できていることが見て取れ、適切に動作していると言うことが確認できる。
