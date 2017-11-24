@@ -1,0 +1,110 @@
+1.作成課題 splice
+
+1.1 実行結果
+
+- use "splice.sml";
+[opening splice.sml]
+val splice = fn : string list * string -> string
+val it = () : unit
+- splice (["", "home", "ohori", "papers", "mltext"], "/");
+val it = "/home/ohori/papers/mltext" : string
+- splice (["www", "ice", "nuie", "nagoya-u", "ac", "jp"], ".");
+val it = "www.ice.nuie.nagoya-u.ac.jp" : string
+- splice (["www"], ".");
+val it = "www" : string
+- splice ([], ".");
+val it = "" : string
+- splice (["abc","def","ghi"], "::");
+val it = "abc::def::ghi" : string
+
+1.2 考察
+spliceは再帰的な実装により定義している。
+まずリストの中身がない場合には空の文字列を返すようにしている。これは基本的にはあまり通らず例外処理に近いものである。
+次にListが最後の1要素であった場合に関しては接続文字列をつなげずに文字列を返している。
+最後に通常処理はリストの中身で取得した文字列と接続文字列、再帰処理により作成される文字列を追加している。
+実行結果を見るとリストの中身が接続文字列で接続され、全体が文字列となって返ってきていることが分かるため適切に動作していると分かる。
+
+2.作成課題 suffixList, suffixListFr
+
+2.1 実行結果
+
+[opening suffixList.sml]
+val suffixList = fn : 'a list -> 'a list list
+suffixList.sml:4.29-4.61 Warning: match nonexhaustive
+          (x,y :: ys) => ...
+  
+val suffixListFr = fn : 'a list -> 'a list list
+val it = () : unit
+- suffixList [1,2,3,4];                               
+val it = [[1,2,3,4],[2,3,4],[3,4],[4],[]] : int list list
+- suffixList [];
+stdIn:9.1-9.14 Warning: type vars not generalized because of
+   value restriction are instantiated to dummy types (X1,X2,...)
+val it = [[]] : ?.X1 list list
+- suffixListFr [1,2,3,4];
+val it = [[1,2,3,4],[2,3,4],[3,4],[4],[]] : int list list
+- suffixListFr [];
+stdIn:11.1-11.16 Warning: type vars not generalized because of
+   value restriction are instantiated to dummy types (X1,X2,...)
+val it = [[]] : ?.X1 list list
+
+2.2 考察
+
+suffixListについて
+suffixListは再帰処理により実装している。
+まずリストが空であった場合には[[]]の2重リストを返している。
+次に通常処理では現在の実行での引数のリストを結果のリストに追加している。
+実行結果を確認すると与えたリストの先頭を減らしていったリストが順に追加されていることがわかり適切に動作している。
+なお、空のリストを定義した場合にはリストの型が確定していおらず、中のリストの型が決定されていないため生じた警告である。
+
+suffixListFrについて
+suffixListFrはfoldrを利用して定義している。
+基本的にはsuffixListと同様の動作である。
+初期値には[[]]を与え、関数としては同じ動作をするように定義している。
+なお、再帰的に適用して取得できる結果が2重リストであると関数内で定義されていないため警告が発生しているが初期値に[[]]を定義しているため問題なく動作する。
+実行結果を見ても正しく動作していると分かる。
+
+3.作成課題 flattenFr, forallFr, revFl
+
+3.1 実行結果
+
+[opening fold.sml]
+val flattenFr = fn : 'a list list -> 'a list
+val forallFr = fn : ('a -> bool) -> 'a list -> bool
+val revFl = fn : 'a list -> 'a list
+val it = () : unit
+- flattenFr [[1,2,3],[4,5,6]];
+val it = [1,2,3,4,5,6] : int list
+- forallFr (fn x => x mod 2 = 0) [1,2,3,4];
+val it = false : bool
+- forallFr (fn x => x mod 2 = 0) [2,4,6,8];
+val it = true : bool
+- forallFr (fn x => x mod 2 = 0) [];
+val it = true : bool
+- fun isUpperString s = forallFr Char.isUpper (explode s);
+[autoloading]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+val isUpperString = fn : string -> bool
+- isUpperString "SML";
+val it = true : bool
+- isUpperString "Java";
+val it = false : bool
+- revFl [1,2,3,4,5];
+val it = [5,4,3,2,1] : int list
+
+
+3.2 考察
+
+flattenFrについて
+初期値を[]として再帰取得したリストにリストの先頭であるリストを@により追加することで実現した。
+実行結果を見ると2重リストが1重になり、接続されていることが見て取れる。したがって適切に動作していると分かる。
+
+forallFrについて
+初期値trueと、リストから取得した要素に関数を適用した結果を順々にand演算を行うことで実現した。
+実行結果を見るとすべての要素でtrueとなるリストと関数を与えた場合にはtrue、そうでない場合にはfalseが返り値となっており、適切に実行できていることが分かる。
+
+revFlについて
+初期値を[]として再帰取得したリストに与えられたリストの末尾の要素を追加することで実現した。
+実行結果を見ると順番が反転しており適切に定義できたと分かる。
