@@ -1,0 +1,102 @@
+1.作成課題 FromPreOrder
+
+1.1 実行結果
+
+val it = () : unit
+val it = () : unit
+val it = () : unit
+val fromPreOrder = fn : string -> string tree
+val it = () : unit
+- fromPreOrder "a(b()())(c(d()())())";
+val it =
+  Node ("a",Node ("b",Empty,Empty),Node ("c",Node ("d",Empty,Empty),Empty))
+  : string tree
+
+1.2 考察
+
+未完成のfromPreOrderには右括弧及び左括弧を認識する関数が定義されていなかった。
+そこで最初の左括弧を探す関数searchLPと右括弧を探す関数searchRPを定義した。
+左括弧を探す関数は文字列を1文字ずつ確認して、"("と一致するかどうかで確認を行っている。
+右括弧を探す関数は1文字ずつ確認して括弧を探索し
+")"が発見され対応する左括弧が終了した場合には)括弧の位置を
+")"が発見され対応する括弧がまだある場合には対応括弧を減らして次の括弧を減らしている。
+"("が見つかった場合には対応括弧を増加させている。
+文字列出会った場合には次の文字の探索をしている。
+結果から適切な木構造が得られたため正確に実装できていると考えられる。
+
+2.1 実行結果
+
+[autoloading done]
+val it = () : unit
+val nodes = fn : 'a tree -> int
+val mapTree = fn : ('a -> 'b) -> 'a tree -> 'b tree
+tree2.sml:12.3-32.31 Warning: match nonexhaustive
+          Node (x,Empty,Empty) => ...
+          Node (x,L,Empty) => ...
+          Node (x,Empty,R) => ...
+          Node (x,L,R) => ...
+  
+val maxTree = fn : int tree -> int option
+val it = () : unit
+- nodes (Node(1, Node(2,Empty,Empty), Node(3,Node(4,Empty,Empty),Empty)));
+val it = 4 : int
+- mapTree (fn x => x*2) (Node(1, Node(2,Empty,Empty), Node(3,Node(4,Empty,Empty),Empty)));
+val it = Node (2,Node (4,Empty,Empty),Node (6,Node (8,Empty,Empty),Empty))
+  : int tree
+- maxTree (Node(1, Node(2,Empty,Empty), Node(3,Node(4,Empty,Empty),Empty)));
+val it = SOME 4 : int option
+- maxTree (Node(~1, Node(~2,Empty,Empty), Node(~3,Node(~4,Empty,Empty),Empty)));
+val it = SOME ~1 : int option
+- maxTree Empty;
+val it = NONE : int option
+
+2.2 考察
+nodesについて
+nodesはノードが空の場合に0を返し、そうでない場合には自身の分1を加算し、左右のノードの数を加算することで実現している。
+結果からノードの数が適切に出力されており正確に実装できたと考えられる。
+
+mapTreeについて
+mapTreeはEmptyに関して何もせず、
+そうでない場合にはは自身の要素に関数を適用し、左右のノードに再帰的に関数を適用する異で実現している。
+結果から各ノードに指定した関数が実行されていることが分かり、適切に実装できたと考えられる。
+
+maxTreeについて
+maxTreeではEmptyの場合には例外としてNONEを返している。
+それ以降はcase文を利用して再帰的に実装している。
+右だけに要素がある場合には右の要素にある最大値と自身を比較し
+左だけに要素がある場合には左の要素にある最大値と自身を比較している。
+左右にある場合には自身、右、左の要素にある最大値を返り値としている。
+結果から要素内の最大値が出力されており、適切に実装できたことが分かる。
+
+3.作成課題 treeFold, nodes, mapTree
+
+3.1 実行結果
+
+[autoloading done]
+val it = () : unit
+val treeFold = fn : ('a * 'b * 'b -> 'b) -> 'b -> 'a tree -> 'b
+val nodes = fn : 'a tree -> int
+val mapTree = fn : ('a -> 'b) -> 'a tree -> 'b tree
+val it = () : unit
+- nodes (Node(1, Node(2,Empty,Empty), Node(3,Node(4,Empty,Empty),Empty)));
+val it = 4 : int
+-  mapTree (fn x => x*2) (Node(1, Node(2,Empty,Empty), Node(3,Node(4,Empty,Empty),Empty)));
+val it = Node (2,Node (4,Empty,Empty),Node (6,Node (8,Empty,Empty),Empty))
+  : int tree
+
+3.2 考察
+
+treeFoldについて
+まず木構造としてEmptyが与えられた場合に関しては初期値を返すようにする。
+次にノードが与えられた場合には関数を適用し、左右のノードに再帰的に処理を行う。
+動作確認はnodes, mapTreeの動作確認と同時に行う。
+
+nodesについて
+nodesはEmptyであった場合には数をカウントしないため初期値は0である。
+関数の適用としてはノードがあれば1を加算する。左右のノードに対して関数適用したものを加算するという処理を行う。
+実行結果として適切にノードの数が取得できたことが分かる。
+
+mapTreeについて
+mapTreeはEmptyが与えられた時には何も処理をしないため初期値はEmptyである。
+関数の適用としては与えた関数fをxに適用しそのままの木構造を返している。
+実行結果として与えた関数がすべてのノードに適用できていることが分かる。したがって適切に動作していることがわかる。
