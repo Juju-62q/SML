@@ -1,0 +1,89 @@
+1.作成課題 inc, dec, add
+
+1.1 実行結果
+[autoloading]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+signature LONGNAT =
+  sig
+    exception NegativeLongNat
+    exception IllegalLongNat
+    type longnat
+    val fromIntList : int list -> longnat
+    val toString : longnat -> string
+    val inc : longnat -> longnat
+    val dec : longnat -> longnat
+    val add : longnat * longnat -> longnat
+  end
+structure LongNat : LONGNAT
+val it = () : unit
+- val x = LongNat.fromIntList [1000,9000,2000];
+val x = - : LongNat.longnat
+- LongNat.toString x;
+val it = "200090001000" : string
+- val y = LongNat.fromIntList [9000,1000,8000];
+val y = - : LongNat.longnat
+- val z = LongNat.add (x,y);
+val z = - : LongNat.longnat
+- LongNat.toString z;
+val it = "1000100010000" : string
+- LongNat.fromIntList [1];
+val it = - : LongNat.longnat
+- LongNat.dec it;
+val it = - : LongNat.longnat
+- LongNat.dec it;
+
+uncaught exception NegativeLongNat
+  raised at: signechar.sml:57.22-57.37
+- LongNat.fromIntList [9998];
+val it = - : LongNat.longnat
+- LongNat.inc it;
+val it = - : LongNat.longnat
+- LongNat.toString it;
+val it = "9999" : string
+- LongNat.fromIntList [9999];     
+val it = - : LongNat.longnat
+- LongNat.inc it;
+val it = - : LongNat.longnat
+- LongNat.toString it;
+val it = "10000" : string
+
+val it = () : unit
+- val x = LongNat.fromIntList [1000,200,30,4];
+val x = - : LongNat.longnat
+- val y = LongNat.fromIntList [8998,9800,70,12];
+val y = - : LongNat.longnat
+- LongNat.addc(x,y,0);
+stdIn:4.1-4.13 Error: unbound variable or constructor: addc in path LongNat.addc
+
+
+1.2 考察
+incについて
+incはまず、空リストが与えられた場合には入力の値としては0なので[1]を返している。
+値が存在した場合にはxとemaxを比較し、一致した場合に桁上がりの処理を再帰的に行っている。
+一致しない場合にはxに1を足している。
+結果を確認すると桁上がり、加算ともに正常に動作していると解る。したがって適切に動作するプログラムが作成できたと考えられる。
+
+decについて
+decではまず、空リストの場合にはエクセプションを投げている。
+値が1であった場合には0を示す空リストを返している。
+それ以外の場合にはx = 0であれば桁下がりをするため再帰処理を行っている。
+0でなければ1を減算しリストに追加している。
+結果を確認すると桁下がり、減算、エラー処理のすべてが適切に動作していると分かる。したがって適切に動作するプログラムが作成できたと考えられる。
+
+addについて
+addは補助関数addcを利用し手実装した。addcはキャリーを入力できるadd関数である。
+addcではまず入力がすべて0出会った場合に0を示す空リストを返している。
+キャリーのみの場合にはキャリーをそのまま返している。
+次に第1引数のリストのみ値を持っていた場合に桁上がりを考慮しながら加算し、すべての桁で加算を行っている。
+第2引数にのみ要素がある場合も同様である。
+両方に要素がある場合にはx + y + cの値に応じて桁上がりに対応して加算を行っている。
+結果から桁上がり等適切に実装できていると分かる。
+
+シグネチャについて
+シグネチャを追加すること関数呼び出しをしてもリストの値がそのまま見えないようになって。
+外部から秘匿されているということがわかる。getメソッドに対応するtoString関数を利用することで値を確認することができた。
+また、addcメソッドも外部から秘匿されており、外から実行しても実行することができなかった。
+また、リストを直接関数に与えても適切に動作しなくなった。
+以上よりシグネチャによる秘匿が適切に行え他と考えられる。
