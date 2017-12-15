@@ -1,0 +1,3 @@
+Group is
+  control.sml readcnf.sml print.sml nplsat.sml solver.sml
+  $/basis.cm
