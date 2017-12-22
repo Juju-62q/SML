@@ -144,8 +144,8 @@ fun solve (numVariables, clLiterals) =
 			    val newcf = sub (clNumF, cl) + 1
 			    val _ = update (clNumF, cl, newcf)
 		    in
-                if (sub (clNumF, cl)) >= (length clLiterals) then
-                    incrClNumF t (cl::conflicts)
+                if (sub (clNumF, cl)) >= List.length (sub (clLiterals, cl)) then
+                    cl::(incrClNumF t conflicts)
                 else
 			        incrClNumF t conflicts
 		    end
@@ -294,9 +294,9 @@ fun solve (numVariables, clLiterals) =
 		if isSome iqueueOpt then
 		    let
 			val implicationQueue = valOf iqueueOpt
-            val _ = Print.printStrInt "decLevel: " decLevel 
+            (*val _ = Print.printStrInt "decLevel: " decLevel 
             val _ = print "implicationQueue: " 
-            val _ = Print.printIntList implicationQueue
+            val _ = Print.printIntList implicationQueue*)
 			val newDecLevel = assignValue implicationQueue decLevel
 		    in
 			if newDecLevel > 0

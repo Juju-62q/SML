@@ -1,44 +1,36 @@
-2.1 作成課題
+3.2 作成課題
 
 [プログラム]
-    fun decideLoop count =
-            if count <= numVariables then
-        if (sub (varValues, count)) = 0 then
-            count
-        else
-            decideLoop (count + 1)
-            else
-        0
-
-    (* 命題変数選択(Decision)を行う *)
-    fun decide () =
-        let
-        (* numDecisions を1増やす *)
-            val _ = numDecisions := !numDecisions + 1
-            val variableId = (decideLoop 1)
-        in
-            if variableId = 0 then
-                NONE
-            else
-                (update (varFlipped, variableId, false);SOME([~variableId]))
-        end
 
 [実行結果]
-- Nplsat.nplsat("",["test/test2_2.cnf"]);
+
+- Nplsat.nplsat ("", ["test/test3_1.cnf"]);
 Number of variables = 4
 Number of clauses = 4
 [~1,2]
 [~2]
-[1,2,~3,~4]
-[4]
-decLevel: 1
-implicationQueue: [~1]
-decLevel: 2
-implicationQueue: [~2]
-decLevel: 3
-implicationQueue: [~3]
-decLevel: 4
-implicationQueue: [~4]
+[1,2,~3,4]
+[~4]
+setVarValue 1 ~1
+varValues: [|0,~1,0,0,0|]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,1,0|]
+conflicts: []
+setVarValue 2 ~1
+varValues: [|0,~1,~1,0,0|]
+clNumT: [|1,1,0,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+setVarValue 3 ~1
+varValues: [|0,~1,~1,~1,0|]
+clNumT: [|1,1,1,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+setVarValue 4 ~1
+varValues: [|0,~1,~1,~1,~1|]
+clNumT: [|1,1,1,1|]
+clNumF: [|1,0,3,0|]
+conflicts: []
 Decisions: 5
 Conflicts: 0
 Implications: 4
@@ -47,191 +39,41 @@ SATISFIABLE
 Computation time is 0msec.
 val it = 0 : OS.Process.status
 
-[考察]
-test1_1.cnfの結果から変数が3つ、節が3つ、下記式が取得できたことがわかる。
-[~1,2,3,0]
-[~1,~2,0]
-[1,0]
-これに対しtest1_1.cnfは以下のようになっている。
-p cnf 3 3
--1 2 3 0
--1 -2 0
-1 0
-ファイルから与えたデータは変数が3つ、節が3つ与えられることがわかり、また与えられた式も一致しているということが見て取れる。以上から適切に設定ファイルの読み取りができているということがわかる。
-
-test1_2.cnfの結果から変数が3つ、節が4つ、下記式が取得できたことがわかる。
-[~1,~2,0]
-[2,~3,0]
-[1,3,0]
-[~1,2,3,0]
-これに対しtest1_2.cnfは以下のようになっている。
-p cnf 3 4
--1 -2 0
-2 -3 0
-1 3 0
--1 2 3 0
-ファイルから与えたデータは変数が3つ、節が4つ与えられることがわかり、また与えられた式も一致しているということが見て取れる。以上から適切に設定ファイルの読み取りができているということがわかる。
-
-test1_3.cnfの結果から変数が3つ、節が4つ、下記式が取得できたことがわかる。
-[~1,~2,0]
-[2,~3,0]
-[1,3,0]
-これに対しtest1_3.cnfは以下のようになっている。
-c CNF sample file test1_3.cnf
-p  cnf  3   4
--1 -2   0
-c comment line
-2  -3    0
-1  3 0
--1 2 3 0
-ファイルから与えたデータは変数が3つ、節が4つ与えられることがわかり、また与えられた式も一致しているということが見て取れる。以上から適切に設定ファイルの読み取りができているということがわかる。
-
-1.2 説明課題
-
-[考察]
-readLineはファイルのストリームを受け取り、一行読み込む関数である。
-まずTextIO.inputLineを利用してファイルから1行文のデータを読み込んでいる。
-そのデータが得られなかった場合にはファイルの終端だと判断し、EndOfInputを返り値としている。
-得られた場合にはコメント行あるいは空行であるかどうかを判断する。
-判定にはその行のすべてのデータがスペースであるか、cから始まっている場合にコメントあるいは空行と判断している。
-コメントあるいは空行であった場合には次の行を読み込むため再帰的に処理を行っている。
-そうでなかった場合には読み込んだ文字列を返している。
-
-1.3 実行課題
-
-[実行結果]
-- Nplsat.nplsat("",["test1_1.cnf"]);    
-Number of variables = 3
-Number of clauses = 3
-[~1,2,3]
-[~1,~2]
-[1]
-Decisions: 1
-Conflicts: 0
-Implications: 0
-SATISFIABLE
-0 0 0 0
-Computation time is 0msec.
-val it = 0 : OS.Process.status
-
-- Nplsat.nplsat("",["test1_2.cnf"]);
+- Nplsat.nplsat ("", ["test/test3_2.cnf"]);
 Number of variables = 3
 Number of clauses = 4
-[~1,~2]
-[2,~3]
+[~1,2]
+[3]
+[~2,~3]
 [1,3]
-[~1,2,3]
-Decisions: 1
-Conflicts: 0
-Implications: 0
-SATISFIABLE
-0 0 0 0
-Computation time is 0msec.
-val it = 0 : OS.Process.status
-
-vat.nplsat("",["test1_3.cnf"]);
-Number of variables = 3
-Number of clauses = 4
-[~1,~2]
-[2,~3]
-[1,3]
-[~1,2,3]
-Decisions: 1
-Conflicts: 0
-Implications: 0
-SATISFIABLE
-0 0 0 0
-Computation time is 0msec.
-val it = 0 : OS.Process.status
-l it = 0 : OS.Process.status
-
-[考察]
-実験結果から入力データの読み込みは適切に行うことができているということが見て取れる。
-しかしながら処理時間が0であることや入力ファイルに関わらずすべて0で充足可能としていることから処理を行わずすべて0の時に充足可能として出力するという処理が行われているということがわかる。
-test1_1.cnfは1つのみの節が存在するため明らかにすべて0では充足できない。
-以上から現状では入力データを読み込み、処理を行わず出力していると言うことがわかる。
-
-1.4 作成課題
-
-[プログラム]
-Group is
-  control.sml readcnf.sml print.sml nplsat.sml solver.sml
-  $/basis.cm
-
-[実行結果]
-- CM.make "nplsat.cm";
-[autoloading]
-[library $smlnj/cm/cm.cm is stable]
-[library $smlnj/internal/cm-sig-lib.cm is stable]
-[library $/pgraph.cm is stable]
-[library $smlnj/internal/srcpath-lib.cm is stable]
-[library $SMLNJ-BASIS/basis.cm is stable]
-[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
-[autoloading done]
-[scanning nplsat.cm]
-[parsing (nplsat.cm):readcnf.sml]
-readcnf.sml:59.18 Error: syntax error: inserting  LPAREN
-readcnf.sml:97.4 Error: syntax error: inserting  LPAREN
-nplsat.cm:2.15-2.26 Error: syntax error
-val it = false : bool
--     
-icec49.ice.nuie.nagoya-u.ac.jp{cq0712303}69: vim readcnf.sml
-icec49.ice.nuie.nagoya-u.ac.jp{cq0712303}70: sml
-Standard ML of New Jersey v110.80 [built: Mon Oct  3 11:18:46 2016]
-- CM.make "nplsat.cm";
-[autoloading]
-[library $smlnj/cm/cm.cm is stable]
-[library $smlnj/internal/cm-sig-lib.cm is stable]
-[library $/pgraph.cm is stable]
-[library $smlnj/internal/srcpath-lib.cm is stable]
-[library $SMLNJ-BASIS/basis.cm is stable]
-[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
-[autoloading done]
-[scanning nplsat.cm]
-[parsing (nplsat.cm):readcnf.sml]
-readcnf.sml:59.18 Error: syntax error: inserting  LPAREN
-readcnf.sml:98.6 Error: syntax error: inserting  EQUALOP
-nplsat.cm:2.15-2.26 Error: syntax error
-val it = false : bool
-- ^[:wq
-stdIn:2.1 Error: illegal token
-- 
-icec49.ice.nuie.nagoya-u.ac.jp{cq0712303}71: vim readcnf.sml
-icec49.ice.nuie.nagoya-u.ac.jp{cq0712303}72: sml
-Standard ML of New Jersey v110.80 [built: Mon Oct  3 11:18:46 2016]
-- CM.make "nplsat.cm";
-[autoloading]
-[library $smlnj/cm/cm.cm is stable]
-[library $smlnj/internal/cm-sig-lib.cm is stable]
-[library $/pgraph.cm is stable]
-[library $smlnj/internal/srcpath-lib.cm is stable]
-[library $SMLNJ-BASIS/basis.cm is stable]
-[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
-[autoloading done]
-[scanning nplsat.cm]
-[parsing (nplsat.cm):readcnf.sml]
-[loading (nplsat.cm):control.sml]
-[loading (nplsat.cm):print.sml]
-[compiling (nplsat.cm):readcnf.sml]
-[code: 8074, data: 674, env: 346 bytes]
-[loading (nplsat.cm):solver.sml]
-[loading (nplsat.cm):nplsat.sml]
-[New bindings added.]
-val it = true : bool
-- Nplsat.nplsat ("", ["test1_3.cnf"]);
-Number of variables = 3
-Number of clauses = 4
-[~1,~2]
-[2,~3]
-[1,3]
-[~1,2,3]
-Decisions: 1
-Conflicts: 0
-Implications: 0
-SATISFIABLE
-0 0 0 0
+setVarValue 1 ~1
+varValues: [|0,~1,0,0|]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,0,1|]
+conflicts: []
+setVarValue 2 ~1
+varValues: [|0,~1,~1,0|]
+clNumT: [|1,0,1,0|]
+clNumF: [|1,0,0,1|]
+conflicts: []
+setVarValue 3 ~1
+varValues: [|0,~1,~1,~1|]
+clNumT: [|1,0,2,0|]
+clNumF: [|1,1,0,2|]
+conflicts: [1,3]
+Decisions: 3
+Conflicts: 1
+Implications: 3
+UNSATISFIABLE
 Computation time is 1msec.
 val it = 0 : OS.Process.status
 
 [考察]
-実行結果が実験1.3の結果と一致しており、正確にプログラムが読み込まれたことが見て取れる。したがって本実験で作成したファイルは正確に動作しているということがわかる。
+
+3.3 作成課題
+
+[プログラム]
+
+[実行結果]
+
+[考察]
