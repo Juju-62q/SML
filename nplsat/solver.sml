@@ -90,13 +90,26 @@ fun solve (numVariables, clLiterals) =
 	    makeVarCl 0
 	)
 
+	fun decideLoop count =
+        if count <= numVariables then
+		    if (sub (varValues, count)) = 0 then
+                count
+		    else
+                decideLoop (count + 1)
+        else
+		    0
+
 	(* 命題変数選択(Decision)を行う *)
 	fun decide () =
 	    let
 		(* numDecisions を1増やす *)
-		val _ = numDecisions := !numDecisions + 1
+		    val _ = numDecisions := !numDecisions + 1
+            val variableId = (decideLoop 1)
 	    in
-		NONE
+            if variableId = 0 then
+                NONE
+            else
+                (update (varFlipped, variableId, false);SOME([~variableId]))
 	    end
 
 	(* ID が vid である命題変数に値 sign を割り当てる *)
@@ -128,10 +141,13 @@ fun solve (numVariables, clLiterals) =
 		fun incrClNumF nil conflicts = conflicts
 		  | incrClNumF (cl::t) conflicts =
 		    let
-			val newcf = sub (clNumF, cl) + 1
-			val _ = update (clNumF, cl, newcf)
+			    val newcf = sub (clNumF, cl) + 1
+			    val _ = update (clNumF, cl, newcf)
 		    in
-			incrClNumF t conflicts
+                if (sub (clNumF, cl)) >= (length clLiterals) then
+                    incrClNumF t (cl::conflicts)
+                else
+			        incrClNumF t conflicts
 		    end
 	    in
 		if sign > 0 then (incrClNumT clT;
@@ -192,6 +208,15 @@ fun solve (numVariables, clLiterals) =
 				(* varDecLevel, assignStack の更新をする *)
 				val conflicts = setVarValue (vid, value)
 			    in
+                    Print.printStrIntNonl "setVarValue " vid; 
+                    Print.printStrInt "" value; 
+                    print "varValues: "; 
+                    Print.printIntArray (varValues); 
+                    print "clNumT: "; 
+                    Print.printIntArray (clNumT); 
+                    print "clNumF: "; 
+                    Print.printIntArray (clNumF); 
+                    print "conflicts: "; Print.printIntList (conflicts);
 				(* conflicts が空の場合のみ再帰を続ける *)
 				if null conflicts then deduceQueue rest else conflicts
 			    end
@@ -269,6 +294,9 @@ fun solve (numVariables, clLiterals) =
 		if isSome iqueueOpt then
 		    let
 			val implicationQueue = valOf iqueueOpt
+            val _ = Print.printStrInt "decLevel: " decLevel 
+            val _ = print "implicationQueue: " 
+            val _ = Print.printIntList implicationQueue
 			val newDecLevel = assignValue implicationQueue decLevel
 		    in
 			if newDecLevel > 0
