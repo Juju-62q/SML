@@ -198,34 +198,26 @@ fun solve (numVariables, clLiterals) =
 		  | deduceQueue (assignVal :: rest) =
 		    let
 			(* 命題変数ID *)
-			val vid = abs assignVal
-			(* 割り当てる値(真のときは1, 偽のときは -1) *)
-			val value = Int.sign assignVal
+			    val vid = abs assignVal
+			    (* 割り当てる値(真のときは1, 偽のときは -1) *)
+			    val value = Int.sign assignVal
 		    in
 			(* 値が未定である命題変数のみに値割り当てを行う *)
-			if (sub (varValues, vid) = 0) then
-			    let
-				(* varDecLevel, assignStack の更新をする *)
-				val conflicts = setVarValue (vid, value)
-			    in
-                    Print.printStrIntNonl "setVarValue " vid; 
-                    Print.printStrInt "" value; 
-                    print "varValues: "; 
-                    Print.printIntArray (varValues); 
-                    print "clNumT: "; 
-                    Print.printIntArray (clNumT); 
-                    print "clNumF: "; 
-                    Print.printIntArray (clNumF); 
-                    print "conflicts: "; Print.printIntList (conflicts);
-				(* conflicts が空の場合のみ再帰を続ける *)
-				if null conflicts then deduceQueue rest else conflicts
-			    end
-			else
+			    if (sub (varValues, vid) = 0) then
+			        let
+				    (* varDecLevel, assignStack の更新をする *)
+                        val _ = update(varDecLevel, vid, decLevel)
+				        val conflicts = setVarValue (vid, value)
+			        in
+				    (* conflicts が空の場合のみ再帰を続ける *)
+				        if null conflicts then deduceQueue rest else conflicts
+			        end
+			    else
 			    (* 命題変数の値が未定でない場合も deduceQueue の再帰呼び出しを行う *)
-			    deduceQueue rest
+			        deduceQueue rest
 		    end
 	    in
-		deduceQueue implicationQueue
+		    deduceQueue implicationQueue
 	    end
 		
 	(* 矛盾の解析(Conflict-analysis)を行う *)
