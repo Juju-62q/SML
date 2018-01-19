@@ -44,18 +44,18 @@ fun solve (numVariables, clLiterals) =
 	val numClauses = length clLiterals
 	val vasize = numVariables + 1
 
-	(* ̿���ѿ���������� *)
+	(* ̿���ѿ����������? *)
 	val varValues =  array(vasize, 0)
 	val varDecLevel =  array(vasize, ~1)
 	val varFlipped = array(vasize, false)
 	val varClT = array(vasize, []) : int list array
 	val varClF = array(vasize, []) : int list array
 					  
-	(* ����������� *)
+	(* �����������? *)
 	val clNumF =  array(numClauses,0)
 	val clNumT =  array(numClauses,0)
 
-	(* ������ƥ����å������� *)
+	(* ������ƥ����å�������? *)
 	val assignStack = array(vasize, []) : int list array
 
 	(* varClT, varClF ���ͷ׻� *)
@@ -90,7 +90,7 @@ fun solve (numVariables, clLiterals) =
 	    makeVarCl 0
 	)
 
-	(* ̿���ѿ�����(Decision)��Ԥ� *)
+	(* ̿���ѿ�����(Decision)��Ԥ�? *)
 	fun decideLoop count =
 	    if count <= numVariables then
 		if sub(varValues,count) = 0 then
@@ -119,11 +119,11 @@ fun solve (numVariables, clLiterals) =
 		(* varValues �򹹿����� *)
 		val _ = update (varValues, vid, sign)
 			       
-		(* clT ��̿���ѿ� vid ������ƥ��Ȥ��Ƹ������ꥹ�� *)
+		(* clT ��̿���ѿ� vid ������ƥ��Ȥ��Ƹ������ꥹ��? *)
 		val clT = sub (varClT, vid)
 		(* clF ��̿���ѿ� vid �����ƥ��Ȥ��Ƹ������ꥹ�� *)
 		val clF = sub (varClF, vid)
-		(* ������clID�Υꥹ�Ȥ����ꡢ����� clNumT ��1���䤹�� *)
+		(* ������clID�Υꥹ�Ȥ����ꡢ�����? clNumT ��1���䤹�� *)
 		(* clNumT �ϳ���ο���ƥ��ο��Ǥ��롣                 *)
 		fun incrClNumT nil = ()
 		  | incrClNumT (cl::t) =
@@ -133,10 +133,10 @@ fun solve (numVariables, clLiterals) =
 		    in
 			incrClNumT t
 		    end
-		(* ������clID�Υꥹ�Ȥ����ꡢ����� clNumF ��1���䤹��     *)
+		(* ������clID�Υꥹ�Ȥ����ꡢ�����? clNumF ��1���䤹��     *)
 		(* clNumF �ϳ���ε���ƥ��ο��Ǥ��롣                     *)
-		(* �ޤ���clNumF ���ͤ���Υ�����(��ƥ��ο�)���������ʤä� *)
-		(* ���ϥꥹ�� conflicts ��������clID��ä��롣             *)
+		(* �ޤ���clNumF ���ͤ���Υ�����?(��ƥ��ο�?)���������ʤä� *)
+		(* ���ϥꥹ�� conflicts ��������clID��ä���?             *)
 		fun incrClNumF nil conflicts = conflicts
 		  | incrClNumF (cl::t) conflicts =
 		    let
@@ -189,7 +189,7 @@ fun solve (numVariables, clLiterals) =
 		      raise Error UnexpectedError)
 	    end
 		
-	(* ����(Deduction)��Ԥ� *)
+	(* ����(Deduction)��Ԥ�? *)
 	(* deduce �� setVarValues ���֤��͡�conflicts�ˤ��֤� *)
 	fun deduce implicationQueue decLevel =
 	    let
@@ -198,10 +198,10 @@ fun solve (numVariables, clLiterals) =
 		    let
 			(* ̿���ѿ�ID *)
 			val vid = abs assignVal
-			(* ������Ƥ���(���ΤȤ���1, ���ΤȤ��� -1) *)
+			(* ������Ƥ���?(���ΤȤ���1, ���ΤȤ��� -1) *)
 			val value = Int.sign assignVal
 		    in
-			(* �ͤ�̤��Ǥ���̿���ѿ��Τߤ��ͳ�����Ƥ�Ԥ� *)
+			(* �ͤ�̤��Ǥ���̿���ѿ��Τߤ��ͳ�����Ƥ�Ԥ�? *)
 			if (sub (varValues, vid) = 0) then
 			    let
 				(* varDecLevel, assignStack �ι����򤹤� *)
@@ -221,14 +221,14 @@ fun solve (numVariables, clLiterals) =
 				if null conflicts then deduceQueue rest else conflicts
 			    end
 			else
-			    (* ̿���ѿ����ͤ�̤��Ǥʤ����� deduceQueue �κƵ��ƤӽФ���Ԥ� *)
+			    (* ̿���ѿ����ͤ�̤��Ǥʤ�����? deduceQueue �κƵ��ƤӽФ���Ԥ�? *)
 			    deduceQueue rest
 		    end
 	    in
 		deduceQueue implicationQueue
 	    end
 		
-	(* ̷��β���(Conflict-analysis)��Ԥ� *)
+	(* ̷��β���?(Conflict-analysis)��Ԥ�? *)
 	(* conflicts �ϻ��Ѥ��Ƥ��ʤ� *)
 	fun analyzeConflicts decLevel conflicts =
 	    let
@@ -236,12 +236,16 @@ fun solve (numVariables, clLiterals) =
 		val _ = numConflicts := !numConflicts + 1
 		fun flipVar 0 = (0, [])
 		  | flipVar n =
-			flipVar (n - 1)
+        if (sub(varFlipped, n) = true) then
+			    flipVar (n - 1)
+        else
+          (update(varFlipped, n, true);
+          (n,[~ (hd (sub(assignStack, n)))]))
 	    in
 		flipVar decLevel
 	    end
 		
-	(* decLevel �ʲ���backLevel �ʾ�γ�����Ƥ���ä� *)
+	(* decLevel �ʲ���backLevel �ʾ�γ�����Ƥ���ä�? *)
 	fun backtrack backLevel decLevel =
 	    let
 		fun bt n =
@@ -267,7 +271,7 @@ fun solve (numVariables, clLiterals) =
 		bt decLevel
 	    end
 		
-	(* õ���ڤˤ����Ƽ��λޤν�����Ԥ� *)
+	(* õ���ڤˤ����Ƽ��λޤν�����Ԥ�? *)
 	fun nextBranch decLevel =
 	    let
 		val iqueueOpt = decide ()
@@ -276,9 +280,24 @@ fun solve (numVariables, clLiterals) =
 		(* Unsatisfialble �ʤ� 0 ���֤� *)
 		fun assignValue implicationQueue decLevel =
 		    let
-	val _ = Print.printStrInt "deduce at decision level " decLevel; val _ = print "implicationQueue: "; val _ = Print.printIntList implicationQueue;
-			val conflicts = deduce implicationQueue decLevel
-val _ = print "varDecLevel: "; val _ = Print.printIntArray varDecLevel; val _ = Print.printStrIntNonl "assignStack at decision level " decLevel; val _ = Print.printIntList (sub(assignStack,decLevel));
+          val conflicts = deduce implicationQueue decLevel
+          val _ = Print.printStrInt "deduce at decision level " decLevel; 
+          val _ = print "implicationQueue: "; 
+          val _ = Print.printIntList implicationQueue; 
+          val _ = print "varDecLevel: "; 
+          val _ = Print.printIntArray varDecLevel; 
+          val _ = print "varValues: "; 
+          val _ = Print.printIntArray varValues; 
+          val _ = Print.printStrIntNonl "assignStack at decision level " decLevel; 
+          val _ = Print.printIntList (sub(assignStack,decLevel)); 
+          val _ = print "clNumT: "; 
+          val _ = Print.printIntArray clNumT; 
+          val _ = print "clNumF: "; 
+          val _ = Print.printIntArray clNumF; 
+          val _ = print "conflicts: "; 
+          val _ = Print.printIntList conflicts; 
+          val _ = print "varFlipped: "; 
+          val _ = Print.printBoolArray varFlipped;
 		    in
 			if null conflicts  then
 			    decLevel
@@ -308,7 +327,7 @@ val _ = print "varDecLevel: "; val _ = Print.printIntArray varDecLevel; val _ = 
 			else false
 		    end
 		else
-		    true (* ���򤹤������ѿ����ʤ���� SATISFIABLE *)
+		    true (* ���򤹤������ѿ����ʤ����? SATISFIABLE *)
 	    end
 		
 	(* ��®���Τ������������Ԥ� *) 
@@ -317,7 +336,7 @@ val _ = print "varDecLevel: "; val _ = Print.printIntArray varDecLevel; val _ = 
 		(* ��������ID *)
 		fun findUnitClauses n = []
 		val unitClauses = findUnitClauses 0
-		(* unitClauses ���Ф��ƿ�����Ԥ� *)
+		(* unitClauses ���Ф��ƿ�����Ԥ�? *)
 		val conflicts = deduce unitClauses 0
 	    in
 		null conflicts
