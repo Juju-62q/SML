@@ -236,10 +236,10 @@ fun solve (numVariables, clLiterals) =
 		val _ = numConflicts := !numConflicts + 1
 		fun flipVar 0 = (0, [])
 		  | flipVar n =
-        if (sub(varFlipped, n) = true) then
+        if (sub(varFlipped, abs (hd (sub(assignStack,n)))) = true) then
 			    flipVar (n - 1)
         else
-          (update(varFlipped, n, true);
+          (update(varFlipped, abs ( hd (sub(assignStack,n))), true);
           (n,[~ (hd (sub(assignStack, n)))]))
 	    in
 		flipVar decLevel
@@ -334,8 +334,17 @@ fun solve (numVariables, clLiterals) =
 	fun preprocess () =
 	    let
 		(* ��������ID *)
-		fun findUnitClauses n = []
+		fun findUnitClauses n = 
+      if n >= numClauses then
+        []
+      else if (List.length (sub(clLiterals, n))) = 1 then
+        (hd (sub(clLiterals, n)))::(findUnitClauses (n + 1))
+      else
+        findUnitClauses (n + 1)
+        
 		val unitClauses = findUnitClauses 0
+    (*val _ = print "result of findUnitClauses: " 
+    val _ = Print.printIntList (unitClauses)*)
 		(* unitClauses ���Ф��ƿ�����Ԥ�? *)
 		val conflicts = deduce unitClauses 0
 	    in

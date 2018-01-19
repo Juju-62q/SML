@@ -1,0 +1,92 @@
+5.1 作成課題
+
+[プログラム]
+fun findUnitClauses n = 
+  if n >= numClauses then
+    []
+  else if (List.length (sub(clLiterals, n))) = 1 then
+    (hd (sub(clLiterals, n)))::(findUnitClauses (n + 1))
+  else
+    findUnitClauses (n + 1)
+
+[実行結果]
+
+- Nplsat.nplsat ("", ["test/test5_1.cnf"]);
+result of findUnitClauses: [~1,2,~3,4]
+Decisions: 2
+Conflicts: 0
+Implications: 5
+SATISFIABLE
+Computation time is 1msec.
+val it = 0 : OS.Process.status
+- Nplsat.nplsat ("", ["test/test5_2.cnf"]);
+result of findUnitClauses: [4]
+Decisions: 4
+Conflicts: 5
+Implications: 9
+UNSATISFIABLE
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+- Nplsat.nplsat ("", ["test/test5_3.cnf"]);
+result of findUnitClauses: [~1]
+Decisions: 4
+Conflicts: 3
+Implications: 7
+SATISFIABLE
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+- Nplsat.nplsat ("", ["test/test5_4.cnf"]);
+result of findUnitClauses: [~2,~4,2]
+Decisions: 0
+Conflicts: 0
+Implications: 1
+UNSATISFIABLE
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+
+[考察]
+findUnitClauseではリテラルが1つの場合に変数をリストに追加し値を返している。
+したがって節番号が節数を越えた場合には空のリストを返している。
+そうでなく、リテラルが1つであった場合には割り当てるべき値をリストに追加し、次の節を指定して再帰呼び出ししている。
+以上に当てはまらない場合には次の節を指定して再帰呼び出ししている。
+
+実行結果から充足可能である論理式では充足可能になっており充足不能であるものは充足不能になっており、正確に判定できていることが確認できる。
+
+加えて、リテラルが1つの場合についてはresult of findUnitClausesから見て取れるようにリストに追加されていると言うことが確認できる。
+
+以上からプログラムは適切に実行できたと確認できた。
+
+4.2 実行課題
+
+[実行結果]
+
+icec49.ice.nuie.nagoya-u.ac.jp
+
+- Nplsat.nplsat ("", ["test/sudoku8993.cnf", "sudoku8993.sat"]);
+Decisions: 879
+Conflicts: 230
+Implications: 1144
+SATISFIABLE
+Computation time is 26msec.
+val it = 0 : OS.Process.status
+
+- Nplsat.nplsat ("", ["test/sudoku11548.cnf", "sudoku11548.sat"]);
+Decisions: 21923
+Conflicts: 21274
+Implications: 43226
+SATISFIABLE
+Computation time is 85msec.
+val it = 0 : OS.Process.status
+
+- Nplsat.nplsat ("", ["test/sudoku5374.cnf", "sudoku5374.sat"]);
+Decisions: 1152788
+Conflicts: 1152139
+Implications: 2304948
+SATISFIABLE
+Computation time is 2461msec.
+val it = 0 : OS.Process.status
+
+[考察]
+satsolverでは変数や節の数が指数で計算量に影響を与えるため、今回追加したプログラムで探索不要な節、リテラルを探索対象から外したことにより高速化が行われている。
+
+実験4-2でも実行したsudoku11548では修正前は40秒かかっていたことに対し、85msに減少していることが確認できた。
