@@ -1,6 +1,24 @@
+3.1 説明課題
+
+[考察]
+varCITは正のリテラルのリストの配列となる。つまり[],[],[1],[2]となる。
+varCIFは負のリテラルのリストの配列となる。したがって[1, 3],[1,2],[],[3]となる。
+
 3.2 作成課題
 
 [プログラム]
+
+    fun incrClNumF nil conflicts = conflicts
+      | incrClNumF (cl::t) conflicts =
+        let
+          val newcf = sub (clNumF, cl) + 1
+          val _ = update (clNumF, cl, newcf)
+        in
+                if (sub (clNumF, cl)) >= List.length (sub (clLiterals, cl)) then
+                    cl::(incrClNumF t conflicts)
+                else
+              incrClNumF t conflicts
+        end
 
 [実行結果]
 
@@ -69,11 +87,201 @@ Computation time is 1msec.
 val it = 0 : OS.Process.status
 
 [考察]
+incrCINumFでは与えられた各リテラルの値の組み合わせと節からその説が真とならない場合を調べ、しんとならない場合にはconflictに要素を追加する。
+つまり、節のリテラルの数と負のリテラルが一致する場合にはconflictに要素を追加している。
+conflictには節の識別子を追加している。
+現状ではすべてを負の値としているためすべてが正のリテラルの節が存在した場合に充足不能という表示がされる。
+結果から真とならない場合にconflictsに節番号が追加され、充足不能と表示されているとわかる。
 
 3.3 作成課題
 
+[充足可能性]
+a.
+-2 0, -4 0から2,4は偽の値である必要がある。
+この情報と -1 2 0から1は偽の値である必要がある。
+1 2 -3 4 0では3が偽である必要があるとわかる。
+以上からすべてが負の時に論理式は充足される。したがって充足可能である。
+
+b.
+3 0から3は真の値である必要がある。
+-2 -3 0 で2が偽の値である必要がある。
+-1 2 0から1は偽の値である必要がある。
+この時に-2 -3 0は充足される。
+したがって充足可能である。
+
+c.
+-2 0から2は偽の値である必要がある。
+-3 0から3は偽の値である必要がある。
+1 2 0から1は真の値である必要がある。
+この時-1 2 3 0は偽になってしまう。
+以上から充足不能である。
+
 [プログラム]
 
+    fun deduceQueue [] = []
+      | deduceQueue (assignVal :: rest) =
+        let
+      (* 命題変数ID *)
+          val vid = abs assignVal
+          (* 割り当てる値(真のときは1, 偽のときは -1) *)
+          val value = Int.sign assignVal
+        in
+      (* 値が未定である命題変数のみに値割り当てを行う *)
+          if (sub (varValues, vid) = 0) then
+              let
+            (* varDecLevel, assignStack の更新をする *)
+                        val _ = update(varDecLevel, vid, decLevel)
+                        val _ = update(assignStack, decLevel, sub(assignStack, decLevel)@[assignVal])
+                val conflicts = setVarValue (vid, value)
+              in
+            (* conflicts が空の場合のみ再帰を続ける *)
+                        Print.printStrIntNonl "setVarValue " vid;
+                        Print.printStrInt "" value;
+                        print "varValues: ";
+                        Print.printIntArray (varValues);
+                        print "clNumT: ";
+                        Print.printIntArray (clNumT); print "clNumF: ";
+                        Print.printIntArray (clNumF); print "conflicts: ";
+                        Print.printIntList (conflicts); 
+                if null conflicts then deduceQueue rest else conflicts
+              end
+          else
+          (* 命題変数の値が未定でない場合も deduceQueue の再帰呼び出しを行う *)
+              deduceQueue rest
+        end
+
 [実行結果]
+- Nplsat.nplsat ("", ["test/test3_1.cnf"]);
+Number of variables = 4
+Number of clauses = 4
+[~1,2]
+[~2]
+[1,2,~3,4]
+[~4]
+deduce at decision level 1
+implicationQueue: [~1]
+setVarValue 1 ~1
+varValues: [|0,~1,0,0,0|]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,1,0|]
+conflicts: []
+varDecLevel: [|~1,1,~1,~1,~1|]
+assignStack at decision level 1 [~1]
+deduce at decision level 2
+implicationQueue: [~2]
+setVarValue 2 ~1
+varValues: [|0,~1,~1,0,0|]
+clNumT: [|1,1,0,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+varDecLevel: [|~1,1,2,~1,~1|]
+assignStack at decision level 2 [~2]
+deduce at decision level 3
+implicationQueue: [~3]
+setVarValue 3 ~1
+varValues: [|0,~1,~1,~1,0|]
+clNumT: [|1,1,1,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+varDecLevel: [|~1,1,2,3,~1|]
+assignStack at decision level 3 [~3]
+deduce at decision level 4
+implicationQueue: [~4]
+setVarValue 4 ~1
+varValues: [|0,~1,~1,~1,~1|]
+clNumT: [|1,1,1,1|]
+clNumF: [|1,0,3,0|]
+conflicts: []
+varDecLevel: [|~1,1,2,3,4|]
+assignStack at decision level 4 [~4]
+Decisions: 5
+Conflicts: 0
+Implications: 4
+SATISFIABLE
+-1 -2 -3 -4 0
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+
+
+- Nplsat.nplsat ("", ["test/test3_2.cnf"]);
+Number of variables = 3
+Number of clauses = 4
+[~1,2]
+[3]
+[~2,~3]
+[1,3]
+deduce at decision level 1
+implicationQueue: [~1]
+setVarValue 1 ~1
+varValues: [|0,~1,0,0|]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,0,1|]
+conflicts: []
+varDecLevel: [|~1,1,~1,~1|]
+assignStack at decision level 1 [~1]
+deduce at decision level 2
+implicationQueue: [~2]
+setVarValue 2 ~1
+varValues: [|0,~1,~1,0|]
+clNumT: [|1,0,1,0|]
+clNumF: [|1,0,0,1|]
+conflicts: []
+varDecLevel: [|~1,1,2,~1|]
+assignStack at decision level 2 [~2]
+deduce at decision level 3
+implicationQueue: [~3]
+setVarValue 3 ~1
+varValues: [|0,~1,~1,~1|]
+clNumT: [|1,0,2,0|]
+clNumF: [|1,1,0,2|]
+conflicts: [1,3]
+varDecLevel: [|~1,1,2,3|]
+assignStack at decision level 3 [~3]
+Decisions: 3
+Conflicts: 1
+Implications: 3
+UNSATISFIABLE
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+
+- Nplsat.nplsat ("", ["test/test3_3.cnf"]);
+Number of variables = 3
+Number of clauses = 4
+[1,2]
+[~2]
+[~1,2,3]
+[~3]
+deduce at decision level 1
+implicationQueue: [~1]
+setVarValue 1 ~1
+varValues: [|0,~1,0,0|]
+clNumT: [|0,0,1,0|]
+clNumF: [|1,0,0,0|]
+conflicts: []
+varDecLevel: [|~1,1,~1,~1|]
+assignStack at decision level 1 [~1]
+deduce at decision level 2
+implicationQueue: [~2]
+setVarValue 2 ~1
+varValues: [|0,~1,~1,0|]
+clNumT: [|0,1,1,0|]
+clNumF: [|2,0,1,0|]
+conflicts: [0]
+varDecLevel: [|~1,1,2,~1|]
+assignStack at decision level 2 [~2]
+Decisions: 2
+Conflicts: 1
+Implications: 2
+UNSATISFIABLE
+Computation time is 1msec.
+val it = 0 : OS.Process.status
 
 [考察]
+varDecLevelのvid番目にはdecLevelに値を変更した。
+assignStackのdecLevelの部分に与えた値を追加した。
+結果からレベルと変数に与えた値が適切に取れていることが見て取れる。
+test3_1ではすべてが負の値になった際に充足されるため充足可能と評価された。
+test3_2ではバックトラックをして別の値を評価する必要があるため本来充足可能であるが充足不能と判定された。
+test3_3はすべてを確認したわけではないが上の確認から充足不能であることがわかる。どんな値を入れても真にならないため充足不能と判定された。
+以上からプログラムは適切に動作しているとわかる。
+

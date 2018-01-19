@@ -44,21 +44,21 @@ fun solve (numVariables, clLiterals) =
 	val numClauses = length clLiterals
 	val vasize = numVariables + 1
 
-	(* Ì¿ÂêÊÑ¿ôÇÛÎó¤ÎÀ¸À® *)
+	(* Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ *)
 	val varValues =  array(vasize, 0)
 	val varDecLevel =  array(vasize, ~1)
 	val varFlipped = array(vasize, false)
 	val varClT = array(vasize, []) : int list array
 	val varClF = array(vasize, []) : int list array
 					  
-	(* ÀáÇÛÎó¤ÎÀ¸À® *)
+	(* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ *)
 	val clNumF =  array(numClauses,0)
 	val clNumT =  array(numClauses,0)
 
-	(* ³ä¤êÅö¤Æ¥¹¥¿¥Ã¥¯¤ÎÀ¸À® *)
+	(* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½Ã¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ *)
 	val assignStack = array(vasize, []) : int list array
 
-	(* varClT, varClF ¤ÎÃÍ·×»» *)
+	(* varClT, varClF ï¿½ï¿½ï¿½Í·×»ï¿½ *)
 	fun makeVarCl clid =
 	    let
 		fun mkVarCl1 [] = ()
@@ -90,42 +90,41 @@ fun solve (numVariables, clLiterals) =
 	    makeVarCl 0
 	)
 
+	(* Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ï¿½ï¿½ï¿½ï¿½(Decision)ï¿½ï¿½Ô¤ï¿½ *)
 	fun decideLoop count =
-        if count <= numVariables then
-		    if (sub (varValues, count)) = 0 then
-                count
-		    else
-                decideLoop (count + 1)
-        else
-		    0
+	    if count <= numVariables then
+		if sub(varValues,count) = 0 then
+		    count
+		else
+		    decideLoop (count+1)
+	    else
+		0;
 
-	(* Ì¿ÂêÊÑ¿ôÁªÂò(Decision)¤ò¹Ô¤¦ *)
 	fun decide () =
 	    let
-		(* numDecisions ¤ò1Áý¤ä¤¹ *)
-		    val _ = numDecisions := !numDecisions + 1
-            val variableId = (decideLoop 1)
-	    in
-            if variableId = 0 then
-                NONE
-            else
-                (update (varFlipped, variableId, false);SOME([~variableId]))
+		(* numDecisions ï¿½ï¿½1ï¿½ï¿½ï¿½ä¤¹ *)
+		val _ = numDecisions := !numDecisions + 1
+		val decidenum = decideLoop 1
+	    in 
+		if(decidenum = 0) then
+		    NONE
+		else
+		    (update(varFlipped,decidenum,false);SOME([~decidenum]))
 	    end
-
-	(* ID ¤¬ vid ¤Ç¤¢¤ëÌ¿ÂêÊÑ¿ô¤ËÃÍ sign ¤ò³ä¤êÅö¤Æ¤ë *)
+	(* ID ï¿½ï¿½ vid ï¿½Ç¤ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ï¿½ï¿½ï¿½ï¿½ sign ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ *)
 	fun setVarValue (vid, sign) =
 	    let
-		(* numImplications ¤ò1Áý¤ä¤¹ *)
+		(* numImplications ï¿½ï¿½1ï¿½ï¿½ï¿½ä¤¹ *)
 		val _ =  numImplications := !numImplications + 1
-		(* varValues ¤ò¹¹¿·¤¹¤ë *)
+		(* varValues ï¿½ò¹¹¿ï¿½ï¿½ï¿½ï¿½ï¿½ *)
 		val _ = update (varValues, vid, sign)
 			       
-		(* clT ¤ÏÌ¿ÂêÊÑ¿ô vid ¤¬Àµ¥ê¥Æ¥é¥ë¤È¤·¤Æ¸½¤ì¤ëÀá¥ê¥¹¥È *)
+		(* clT ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ vid ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½È¤ï¿½ï¿½Æ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê¥¹ï¿½ï¿½ *)
 		val clT = sub (varClT, vid)
-		(* clF ¤ÏÌ¿ÂêÊÑ¿ô vid ¤¬Éé¥ê¥Æ¥é¥ë¤È¤·¤Æ¸½¤ì¤ëÀá¥ê¥¹¥È *)
+		(* clF ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ vid ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½È¤ï¿½ï¿½Æ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê¥¹ï¿½ï¿½ *)
 		val clF = sub (varClF, vid)
-		(* °ú¿ô¤ËclID¤Î¥ê¥¹¥È¤ò¼õ¼è¤ê¡¢³ÆÀá¤Î clNumT ¤ò1Áý¤ä¤¹¡£ *)
-		(* clNumT ¤Ï³ÆÀá¤Î¿¿¥ê¥Æ¥é¥ë¤Î¿ô¤Ç¤¢¤ë¡£                 *)
+		(* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½clIDï¿½Î¥ê¥¹ï¿½È¤ï¿½ï¿½ï¿½ï¿½ê¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ clNumT ï¿½ï¿½1ï¿½ï¿½ï¿½ä¤¹ï¿½ï¿½ *)
+		(* clNumT ï¿½Ï³ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½Î¿ï¿½ï¿½Ç¤ï¿½ï¿½ë¡£                 *)
 		fun incrClNumT nil = ()
 		  | incrClNumT (cl::t) =
 		    let
@@ -134,20 +133,20 @@ fun solve (numVariables, clLiterals) =
 		    in
 			incrClNumT t
 		    end
-		(* °ú¿ô¤ËclID¤Î¥ê¥¹¥È¤ò¼õ¼è¤ê¡¢³ÆÀá¤Î clNumF ¤ò1Áý¤ä¤¹¡£     *)
-		(* clNumF ¤Ï³ÆÀá¤Îµ¶¥ê¥Æ¥é¥ë¤Î¿ô¤Ç¤¢¤ë¡£                     *)
-		(* ¤Þ¤¿¡¢clNumF ¤ÎÃÍ¤¬Àá¤Î¥µ¥¤¥º(¥ê¥Æ¥é¥ë¤Î¿ô)¤ÈÅù¤·¤¯¤Ê¤Ã¤¿ *)
-		(* ¾ì¹ç¤Ï¥ê¥¹¥È conflicts ¤ÎËöÈø¤ËclID¤ò²Ã¤¨¤ë¡£             *)
+		(* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½clIDï¿½Î¥ê¥¹ï¿½È¤ï¿½ï¿½ï¿½ï¿½ê¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ clNumF ï¿½ï¿½1ï¿½ï¿½ï¿½ä¤¹ï¿½ï¿½     *)
+		(* clNumF ï¿½Ï³ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½Æ¥ï¿½ï¿½Î¿ï¿½ï¿½Ç¤ï¿½ï¿½ë¡£                     *)
+		(* ï¿½Þ¤ï¿½ï¿½ï¿½clNumF ï¿½ï¿½ï¿½Í¤ï¿½ï¿½ï¿½Î¥ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Æ¥ï¿½ï¿½Î¿ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤Ã¤ï¿½ *)
+		(* ï¿½ï¿½ï¿½Ï¥ê¥¹ï¿½ï¿½ conflicts ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½clIDï¿½ï¿½Ã¤ï¿½ï¿½ë¡£             *)
 		fun incrClNumF nil conflicts = conflicts
 		  | incrClNumF (cl::t) conflicts =
 		    let
-			    val newcf = sub (clNumF, cl) + 1
-			    val _ = update (clNumF, cl, newcf)
+			val newcf = sub (clNumF, cl) + 1
+			val _ = update (clNumF, cl, newcf)
 		    in
-                if (sub (clNumF, cl)) >= List.length (sub (clLiterals, cl)) then
-                    cl::(incrClNumF t conflicts)
-                else
-			        incrClNumF t conflicts
+			if(sub(clNumF,cl) >= (List.length(sub(clLiterals,cl)))) then
+			       cl::(incrClNumF t conflicts)
+			   else
+			       incrClNumF t conflicts
 		    end
 	    in
 		if sign > 0 then (incrClNumT clT;
@@ -158,7 +157,7 @@ fun solve (numVariables, clLiterals) =
 		      raise Error UnexpectedError)
 	    end
 		
-	(* ID ¤¬ vid ¤Ç¤¢¤ëÌ¿ÂêÊÑ¿ô¤Î³ä¤êÅö¤Æ¤ò¼è¤ê¾Ã¤¹ *)
+	(* ID ï¿½ï¿½ vid ï¿½Ç¤ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ï¿½Î³ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½Ã¤ï¿½ *)
 	fun unsetVarValue vid =
 	    let
 		val sign = sub (varValues, vid)
@@ -190,41 +189,50 @@ fun solve (numVariables, clLiterals) =
 		      raise Error UnexpectedError)
 	    end
 		
-	(* ¿äÏÀ(Deduction)¤ò¹Ô¤¦ *)
-	(* deduce ¤Ï setVarValues ¤ÎÊÖ¤¹ÃÍ¡Êconflicts¡Ë¤òÊÖ¤¹ *)
+	(* ï¿½ï¿½ï¿½ï¿½(Deduction)ï¿½ï¿½Ô¤ï¿½ *)
+	(* deduce ï¿½ï¿½ setVarValues ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½Í¡ï¿½conflictsï¿½Ë¤ï¿½ï¿½Ö¤ï¿½ *)
 	fun deduce implicationQueue decLevel =
 	    let
 		fun deduceQueue [] = []
 		  | deduceQueue (assignVal :: rest) =
 		    let
-			(* Ì¿ÂêÊÑ¿ôID *)
-			    val vid = abs assignVal
-			    (* ³ä¤êÅö¤Æ¤ëÃÍ(¿¿¤Î¤È¤­¤Ï1, µ¶¤Î¤È¤­¤Ï -1) *)
-			    val value = Int.sign assignVal
+			(* Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ID *)
+			val vid = abs assignVal
+			(* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Î¤È¤ï¿½ï¿½ï¿½1, ï¿½ï¿½ï¿½Î¤È¤ï¿½ï¿½ï¿½ -1) *)
+			val value = Int.sign assignVal
 		    in
-			(* ÃÍ¤¬Ì¤Äê¤Ç¤¢¤ëÌ¿ÂêÊÑ¿ô¤Î¤ß¤ËÃÍ³ä¤êÅö¤Æ¤ò¹Ô¤¦ *)
-			    if (sub (varValues, vid) = 0) then
-			        let
-				    (* varDecLevel, assignStack ¤Î¹¹¿·¤ò¤¹¤ë *)
-                        val _ = update(varDecLevel, vid, decLevel)
-				        val conflicts = setVarValue (vid, value)
-			        in
-				    (* conflicts ¤¬¶õ¤Î¾ì¹ç¤Î¤ßºÆµ¢¤òÂ³¤±¤ë *)
-				        if null conflicts then deduceQueue rest else conflicts
-			        end
-			    else
-			    (* Ì¿ÂêÊÑ¿ô¤ÎÃÍ¤¬Ì¤Äê¤Ç¤Ê¤¤¾ì¹ç¤â deduceQueue ¤ÎºÆµ¢¸Æ¤Ó½Ð¤·¤ò¹Ô¤¦ *)
-			        deduceQueue rest
+			(* ï¿½Í¤ï¿½Ì¤ï¿½ï¿½Ç¤ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ï¿½Î¤ß¤ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½Ô¤ï¿½ *)
+			if (sub (varValues, vid) = 0) then
+			    let
+				(* varDecLevel, assignStack ï¿½Î¹ï¿½ï¿½ï¿½ï¿½ò¤¹¤ï¿½ *)
+				val _ = update(varDecLevel,vid,decLevel)
+				val _ = update(assignStack,decLevel,((sub(assignStack,decLevel))@[assignVal]))
+				val conflicts = setVarValue (vid, value)
+			    in
+				Print.printStrIntNonl "setVarValue " vid;
+				Print.printStrInt "" value;
+				print "varValues: ";
+				Print.printIntArray (varValues);
+				print "clNumT: ";
+				Print.printIntArray (clNumT); print "clNumF: ";
+				Print.printIntArray (clNumF); print "conflicts: ";
+				Print.printIntList (conflicts);
+				(* conflicts ï¿½ï¿½ï¿½ï¿½ï¿½Î¾ï¿½ï¿½Î¤ßºÆµï¿½ï¿½ï¿½Â³ï¿½ï¿½ï¿½ï¿½ *)
+				if null conflicts then deduceQueue rest else conflicts
+			    end
+			else
+			    (* Ì¿ï¿½ï¿½ï¿½Ñ¿ï¿½ï¿½ï¿½ï¿½Í¤ï¿½Ì¤ï¿½ï¿½Ç¤Ê¤ï¿½ï¿½ï¿½ï¿½ï¿½ deduceQueue ï¿½ÎºÆµï¿½ï¿½Æ¤Ó½Ð¤ï¿½ï¿½ï¿½Ô¤ï¿½ *)
+			    deduceQueue rest
 		    end
 	    in
-		    deduceQueue implicationQueue
+		deduceQueue implicationQueue
 	    end
 		
-	(* Ì·½â¤Î²òÀÏ(Conflict-analysis)¤ò¹Ô¤¦ *)
-	(* conflicts ¤Ï»ÈÍÑ¤·¤Æ¤¤¤Ê¤¤ *)
+	(* Ì·ï¿½ï¿½Î²ï¿½ï¿½ï¿½(Conflict-analysis)ï¿½ï¿½Ô¤ï¿½ *)
+	(* conflicts ï¿½Ï»ï¿½ï¿½Ñ¤ï¿½ï¿½Æ¤ï¿½ï¿½Ê¤ï¿½ *)
 	fun analyzeConflicts decLevel conflicts =
 	    let
-		(* numConflicts ¤ò1Áý¤ä¤¹ *)
+		(* numConflicts ï¿½ï¿½1ï¿½ï¿½ï¿½ä¤¹ *)
 		val _ = numConflicts := !numConflicts + 1
 		fun flipVar 0 = (0, [])
 		  | flipVar n =
@@ -233,7 +241,7 @@ fun solve (numVariables, clLiterals) =
 		flipVar decLevel
 	    end
 		
-	(* decLevel °Ê²¼¡¢backLevel °Ê¾å¤Î³ä¤êÅö¤Æ¤ò¼è¤ê¾Ã¤¹ *)
+	(* decLevel ï¿½Ê²ï¿½ï¿½ï¿½backLevel ï¿½Ê¾ï¿½Î³ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½Ã¤ï¿½ *)
 	fun backtrack backLevel decLevel =
 	    let
 		fun bt n =
@@ -259,16 +267,18 @@ fun solve (numVariables, clLiterals) =
 		bt decLevel
 	    end
 		
-	(* Ãµº÷ÌÚ¤Ë¤ª¤¤¤Æ¼¡¤Î»Þ¤Î½èÍý¤ò¹Ô¤¦ *)
+	(* Ãµï¿½ï¿½ï¿½Ú¤Ë¤ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½Î»Þ¤Î½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ *)
 	fun nextBranch decLevel =
 	    let
 		val iqueueOpt = decide ()
-		(* ÃÍ³ä¤êÅö¤Æ¤ò¹Ô¤¦ *)
-		(* ¼¡¤Î Decision Level ¤òÊÖ¤¹ *)
-		(* Unsatisfialble ¤Ê¤é 0 ¤òÊÖ¤¹ *)
+		(* ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½Ô¤ï¿½ *)
+		(* ï¿½ï¿½ï¿½ï¿½ Decision Level ï¿½ï¿½ï¿½Ö¤ï¿½ *)
+		(* Unsatisfialble ï¿½Ê¤ï¿½ 0 ï¿½ï¿½ï¿½Ö¤ï¿½ *)
 		fun assignValue implicationQueue decLevel =
 		    let
+	val _ = Print.printStrInt "deduce at decision level " decLevel; val _ = print "implicationQueue: "; val _ = Print.printIntList implicationQueue;
 			val conflicts = deduce implicationQueue decLevel
+val _ = print "varDecLevel: "; val _ = Print.printIntArray varDecLevel; val _ = Print.printStrIntNonl "assignStack at decision level " decLevel; val _ = Print.printIntList (sub(assignStack,decLevel));
 		    in
 			if null conflicts  then
 			    decLevel
@@ -286,9 +296,11 @@ fun solve (numVariables, clLiterals) =
 		if isSome iqueueOpt then
 		    let
 			val implicationQueue = valOf iqueueOpt
-            (*val _ = Print.printStrInt "decLevel: " decLevel 
-            val _ = print "implicationQueue: " 
-            val _ = Print.printIntList implicationQueue*)
+(*
+			val _ = Print.printStrInt "decLevel: " decLevel 
+			val _ = print "implicationQueue: " 
+			val _ = Print.printIntList implicationQueue
+*)
 			val newDecLevel = assignValue implicationQueue decLevel
 		    in
 			if newDecLevel > 0
@@ -296,16 +308,16 @@ fun solve (numVariables, clLiterals) =
 			else false
 		    end
 		else
-		    true (* ÁªÂò¤¹¤ëÏÀÍýÊÑ¿ô¤¬¤Ê¤±¤ì¤Ð SATISFIABLE *)
+		    true (* ï¿½ï¿½ï¿½ò¤¹¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¿ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½ï¿½ï¿½ SATISFIABLE *)
 	    end
 		
-	(* ¹âÂ®²½¤Î¤¿¤á¤ÎÁ°½èÍý¤ò¹Ô¤¦ *) 
+	(* ï¿½ï¿½Â®ï¿½ï¿½ï¿½Î¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ *) 
 	fun preprocess () =
 	    let
-		(* °ú¿ô¤ÏÀáID *)
+		(* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ID *)
 		fun findUnitClauses n = []
 		val unitClauses = findUnitClauses 0
-		(* unitClauses ¤ËÂÐ¤·¤Æ¿äÏÀ¤ò¹Ô¤¦ *)
+		(* unitClauses ï¿½ï¿½ï¿½Ð¤ï¿½ï¿½Æ¿ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ *)
 		val conflicts = deduce unitClauses 0
 	    in
 		null conflicts
