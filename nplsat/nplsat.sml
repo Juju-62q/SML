@@ -27,7 +27,7 @@ fun scan args =
 	   case result of 
 	       SOME(res) =>
                (print "SATISFIABLE\n";
-		if noOutputFile then Print.printResult outs res
+		if noOutputFile then ()(*Print.printResult outs res*)
 		else (TextIO.output (outs, "SAT\n");
 		      Print.printResult outs res)
 	       )

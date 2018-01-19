@@ -31,12 +31,12 @@ fun printCNF (nv, clArray) =
 	fun pcnf n =
 	    if n >= nc then ()
 	    else
-		(Print.printIntList (Array.sub(clArray,n));
-		 pcnf (n+1))
+		(*(Print.printIntList (Array.sub(clArray,n));*)
+		 pcnf (n+1)
     in
-	(Print.printStrInt "Number of variables = " nv;
-	 Print.printStrInt "Number of clauses = " nc;
-	 pcnf 0)
+	(*(Print.printStrInt "Number of variables = " nv;
+	 Print.printStrInt "Number of clauses = " nc;*)
+	 pcnf 0
     end
 
 fun solve (numVariables, clLiterals) =
@@ -209,14 +209,14 @@ fun solve (numVariables, clLiterals) =
 				val _ = update(assignStack,decLevel,((sub(assignStack,decLevel))@[assignVal]))
 				val conflicts = setVarValue (vid, value)
 			    in
-				Print.printStrIntNonl "setVarValue " vid;
+				(*Print.printStrIntNonl "setVarValue " vid;
 				Print.printStrInt "" value;
 				print "varValues: ";
 				Print.printIntArray (varValues);
 				print "clNumT: ";
 				Print.printIntArray (clNumT); print "clNumF: ";
 				Print.printIntArray (clNumF); print "conflicts: ";
-				Print.printIntList (conflicts);
+				Print.printIntList (conflicts);*)
 				(* conflicts �����ξ��ΤߺƵ���³���� *)
 				if null conflicts then deduceQueue rest else conflicts
 			    end
@@ -281,7 +281,7 @@ fun solve (numVariables, clLiterals) =
 		fun assignValue implicationQueue decLevel =
 		    let
           val conflicts = deduce implicationQueue decLevel
-          val _ = Print.printStrInt "deduce at decision level " decLevel; 
+          (*val _ = Print.printStrInt "deduce at decision level " decLevel; 
           val _ = print "implicationQueue: "; 
           val _ = Print.printIntList implicationQueue; 
           val _ = print "varDecLevel: "; 
@@ -297,7 +297,7 @@ fun solve (numVariables, clLiterals) =
           val _ = print "conflicts: "; 
           val _ = Print.printIntList conflicts; 
           val _ = print "varFlipped: "; 
-          val _ = Print.printBoolArray varFlipped;
+          val _ = Print.printBoolArray varFlipped;*)
 		    in
 			if null conflicts  then
 			    decLevel
@@ -344,7 +344,7 @@ fun solve (numVariables, clLiterals) =
 		
     in
 	(initVariables ();
-	 printCNF(numVariables, clLiterals);
+	 (*printCNF(numVariables, clLiterals);*)
          if preprocess () then
 	     if nextBranch 1 then (SOME (tl (arrayToList varValues)))
 	     else NONE
