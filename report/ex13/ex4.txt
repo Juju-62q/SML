@@ -1,12 +1,13 @@
 4.1 作成課題
 
 [プログラム]
+
 fun flipVar 0 = (0, [])
  | flipVar n =
-  if (sub(varFlipped, n) = true) then
+  if (sub(varFlipped, abs (hd (sub(assignStack,n)))) = true) then
     flipVar (n - 1)
   else
-    (update(varFlipped, n, true);
+    (update(varFlipped, abs ( hd (sub(assignStack,n))), true);     
     (n,[~ (hd (sub(assignStack, n)))]))
 
 [実行結果]
