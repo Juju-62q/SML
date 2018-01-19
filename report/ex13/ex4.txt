@@ -1,0 +1,321 @@
+4.1 作成課題
+
+[プログラム]
+fun flipVar 0 = (0, [])
+ | flipVar n =
+  if (sub(varFlipped, n) = true) then
+    flipVar (n - 1)
+  else
+    (update(varFlipped, n, true);
+    (n,[~ (hd (sub(assignStack, n)))]))
+
+[実行結果]
+
+- Nplsat.nplsat ("", ["test/test3_1.cnf"]);
+Number of variables = 4
+Number of clauses = 4
+[~1,2]
+[~2]
+[1,2,~3,4]
+[~4]
+setVarValue 1 ~1
+varValues: [|0,~1,0,0,0|]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,1,0|]
+conflicts: []
+deduce at decision level 1
+implicationQueue: [~1]
+varDecLevel: [|~1,1,~1,~1,~1|]
+varValues: [|0,~1,0,0,0|]
+assignStack at decision level 1 [~1]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,1,0|]
+conflicts: []
+varFlipped: [|False,False,False,False,False|]
+setVarValue 2 ~1
+varValues: [|0,~1,~1,0,0|]
+clNumT: [|1,1,0,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+deduce at decision level 2
+implicationQueue: [~2]
+varDecLevel: [|~1,1,2,~1,~1|]
+varValues: [|0,~1,~1,0,0|]
+assignStack at decision level 2 [~2]
+clNumT: [|1,1,0,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+varFlipped: [|False,False,False,False,False|]
+setVarValue 3 ~1
+varValues: [|0,~1,~1,~1,0|]
+clNumT: [|1,1,1,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+deduce at decision level 3
+implicationQueue: [~3]
+varDecLevel: [|~1,1,2,3,~1|]
+varValues: [|0,~1,~1,~1,0|]
+assignStack at decision level 3 [~3]
+clNumT: [|1,1,1,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+varFlipped: [|False,False,False,False,False|]
+setVarValue 4 ~1
+varValues: [|0,~1,~1,~1,~1|]
+clNumT: [|1,1,1,1|]
+clNumF: [|1,0,3,0|]
+conflicts: []
+deduce at decision level 4
+implicationQueue: [~4]
+varDecLevel: [|~1,1,2,3,4|]
+varValues: [|0,~1,~1,~1,~1|]
+assignStack at decision level 4 [~4]
+clNumT: [|1,1,1,1|]
+clNumF: [|1,0,3,0|]
+conflicts: []
+varFlipped: [|False,False,False,False,False|]
+Decisions: 5
+Conflicts: 0
+Implications: 4
+SATISFIABLE
+-1 -2 -3 -4 0
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+
+
+- Nplsat.nplsat ("", ["test/test3_2.cnf"]);
+Number of variables = 3
+Number of clauses = 4
+[~1,2]
+[3]
+[~2,~3]
+[1,3]
+setVarValue 1 ~1
+varValues: [|0,~1,0,0|]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,0,1|]
+conflicts: []
+deduce at decision level 1
+implicationQueue: [~1]
+varDecLevel: [|~1,1,~1,~1|]
+varValues: [|0,~1,0,0|]
+assignStack at decision level 1 [~1]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,0,1|]
+conflicts: []
+varFlipped: [|False,False,False,False|]
+setVarValue 2 ~1
+varValues: [|0,~1,~1,0|]
+clNumT: [|1,0,1,0|]
+clNumF: [|1,0,0,1|]
+conflicts: []
+deduce at decision level 2
+implicationQueue: [~2]
+varDecLevel: [|~1,1,2,~1|]
+varValues: [|0,~1,~1,0|]
+assignStack at decision level 2 [~2]
+clNumT: [|1,0,1,0|]
+clNumF: [|1,0,0,1|]
+conflicts: []
+varFlipped: [|False,False,False,False|]
+setVarValue 3 ~1
+varValues: [|0,~1,~1,~1|]
+clNumT: [|1,0,2,0|]
+clNumF: [|1,1,0,2|]
+conflicts: [1,3]
+deduce at decision level 3
+implicationQueue: [~3]
+varDecLevel: [|~1,1,2,3|]
+varValues: [|0,~1,~1,~1|]
+assignStack at decision level 3 [~3]
+clNumT: [|1,0,2,0|]
+clNumF: [|1,1,0,2|]
+conflicts: [1,3]
+varFlipped: [|False,False,False,False|]
+setVarValue 3 1
+varValues: [|0,~1,~1,1|]
+clNumT: [|1,1,1,1|]
+clNumF: [|1,0,1,1|]
+conflicts: []
+deduce at decision level 3
+implicationQueue: [3]
+varDecLevel: [|~1,1,2,3|]
+varValues: [|0,~1,~1,1|]
+assignStack at decision level 3 [3]
+clNumT: [|1,1,1,1|]
+clNumF: [|1,0,1,1|]
+conflicts: []
+varFlipped: [|False,False,False,True|]
+Decisions: 4
+Conflicts: 1
+Implications: 4
+SATISFIABLE
+-1 -2 3 0
+Computation time is 1msec.
+val it = 0 : OS.Process.status
+
+- Nplsat.nplsat ("", ["test/test3_3.cnf"]);
+Number of variables = 3
+Number of clauses = 4
+[1,2]
+[~2]
+[~1,2,3]
+[~3]
+setVarValue 1 ~1
+varValues: [|0,~1,0,0|]
+clNumT: [|0,0,1,0|]
+clNumF: [|1,0,0,0|]
+conflicts: []
+deduce at decision level 1
+implicationQueue: [~1]
+varDecLevel: [|~1,1,~1,~1|]
+varValues: [|0,~1,0,0|]
+assignStack at decision level 1 [~1]
+clNumT: [|0,0,1,0|]
+clNumF: [|1,0,0,0|]
+conflicts: []
+varFlipped: [|False,False,False,False|]
+setVarValue 2 ~1
+varValues: [|0,~1,~1,0|]
+clNumT: [|0,1,1,0|]
+clNumF: [|2,0,1,0|]
+conflicts: [0]
+deduce at decision level 2
+implicationQueue: [~2]
+varDecLevel: [|~1,1,2,~1|]
+varValues: [|0,~1,~1,0|]
+assignStack at decision level 2 [~2]
+clNumT: [|0,1,1,0|]
+clNumF: [|2,0,1,0|]
+conflicts: [0]
+varFlipped: [|False,False,False,False|]
+setVarValue 2 1
+varValues: [|0,~1,1,0|]
+clNumT: [|1,0,2,0|]
+clNumF: [|1,1,0,0|]
+conflicts: [1]
+deduce at decision level 2
+implicationQueue: [2]
+varDecLevel: [|~1,1,2,~1|]
+varValues: [|0,~1,1,0|]
+assignStack at decision level 2 [2]
+clNumT: [|1,0,2,0|]
+clNumF: [|1,1,0,0|]
+conflicts: [1]
+varFlipped: [|False,False,True,False|]
+setVarValue 1 1
+varValues: [|0,1,0,0|]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,1,0|]
+conflicts: []
+deduce at decision level 1
+implicationQueue: [1]
+varDecLevel: [|~1,1,~1,~1|]
+varValues: [|0,1,0,0|]
+assignStack at decision level 1 [1]
+clNumT: [|1,0,0,0|]
+clNumF: [|0,0,1,0|]
+conflicts: []
+varFlipped: [|False,True,True,False|]
+setVarValue 2 ~1
+varValues: [|0,1,~1,0|]
+clNumT: [|1,1,0,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+deduce at decision level 2
+implicationQueue: [~2]
+varDecLevel: [|~1,1,2,~1|]
+varValues: [|0,1,~1,0|]
+assignStack at decision level 2 [~2]
+clNumT: [|1,1,0,0|]
+clNumF: [|1,0,2,0|]
+conflicts: []
+varFlipped: [|False,True,False,False|]
+setVarValue 3 ~1
+varValues: [|0,1,~1,~1|]
+clNumT: [|1,1,0,1|]
+clNumF: [|1,0,3,0|]
+conflicts: [2]
+deduce at decision level 3
+implicationQueue: [~3]
+varDecLevel: [|~1,1,2,3|]
+varValues: [|0,1,~1,~1|]
+assignStack at decision level 3 [~3]
+clNumT: [|1,1,0,1|]
+clNumF: [|1,0,3,0|]
+conflicts: [2]
+varFlipped: [|False,True,False,False|]
+setVarValue 3 1
+varValues: [|0,1,~1,1|]
+clNumT: [|1,1,1,0|]
+clNumF: [|1,0,2,1|]
+conflicts: [3]
+deduce at decision level 3
+implicationQueue: [3]
+varDecLevel: [|~1,1,2,3|]
+varValues: [|0,1,~1,1|]
+assignStack at decision level 3 [3]
+clNumT: [|1,1,1,0|]
+clNumF: [|1,0,2,1|]
+conflicts: [3]
+varFlipped: [|False,True,False,True|]
+setVarValue 2 1
+varValues: [|0,1,1,0|]
+clNumT: [|2,0,1,0|]
+clNumF: [|0,1,1,0|]
+conflicts: [1]
+deduce at decision level 2
+implicationQueue: [2]
+varDecLevel: [|~1,1,2,~1|]
+varValues: [|0,1,1,0|]
+assignStack at decision level 2 [2]
+clNumT: [|2,0,1,0|]
+clNumF: [|0,1,1,0|]
+conflicts: [1]
+varFlipped: [|False,True,True,True|]
+Decisions: 4
+Conflicts: 5
+Implications: 8
+UNSATISFIABLE
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+
+[考察]
+作成したプログラムでは引数で与えられた指定された位置のvarFlippedを読み込みその値がtrueであればnをデクリメントして再帰呼び出しをしている。
+falseの場合には指定位置のvarFlippedをtrueにし、assignStackの先頭の値を符号反転させ、それをリストにしたものと引数で受け取った指定位置nを組にして返している。なお、nを先に指定している。
+
+プログラムを実行したところバックトレースの発生しない充足可能なtest3-1.cnfは充足可能と判定された。
+バックトレースの発生する充足可能なtest3-2.cnfは充足可能と判定された。
+充足不能なtest3-3.cnfは充足不能であった。
+
+4.2 作成課題
+
+[実行結果]
+icec49.ice.nuie.nagoya-u.ac.jp
+
+- Nplsat.nplsat ("", ["test/sudoku8993.cnf", "sudoku8993.sat"]);
+Decisions: 99832
+Conflicts: 99183
+Implications: 199014
+SATISFIABLE
+Computation time is 241msec.
+val it = 0 : OS.Process.status
+
+- Nplsat.nplsat ("", ["test/sudoku11548.cnf", "sudoku11548.sat"]);
+Decisions: 21375009
+Conflicts: 21374360
+Implications: 42749368
+SATISFIABLE
+Computation time is 42468msec.
+val it = 0 : OS.Process.status
+
+[考察]
+実行したところ8993と11548でともに充足可能であった。
+8993の出力と与えられたsudoku8993sample.smlを比較したところ以下のようになった。
+
+diff sudoku8993.sat sudoku8993sample.sat 
+
+このことから二つのファイルは一致しており、プログラムは正確に実装できたと分かる。
+
+実行時間にかんしてはバックトレースの回数などの相性が存在するため大きく差がでたと考えられる。
+
