@@ -1,0 +1,48 @@
+5.1 作成課題
+
+[プログラム]
+
+[実行結果]
+
+
+val it = true : bool
+- Nplsat.nplsat ("", ["test/test6_2.cnf"]);
+Decisions: 2
+Conflicts: 1
+Implications: 5
+SATISFIABLE
+Computation time is 1msec.
+val it = 0 : OS.Process.status
+- Nplsat.nplsat ("", ["test/test6_2_2.cnf"]);
+Decisions: 2
+Conflicts: 3
+Implications: 7
+UNSATISFIABLE
+Computation time is 1msec.
+val it = 0 : OS.Process.status
+- Nplsat.nplsat ("", ["test/test6_2_3.cnf"]);
+Decisions: 4
+Conflicts: 0
+Implications: 5
+SATISFIABLE
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+- Nplsat.nplsat ("", ["test/test6_3.cnf"]);
+Decisions: 4849381
+Conflicts: 4848732
+Implications: 9698139
+SATISFIABLE
+Computation time is 10189msec.
+val it = 0 : OS.Process.status
+
+
+
+
+[考察]
+
+4.2 実行課題
+
+[実行結果]
+
+[考考察]
+実験4-2でも実行したsudoku11548では修正前は40秒かかっていたことに対し、85msに減少していることが確認できた。

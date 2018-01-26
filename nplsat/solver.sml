@@ -341,12 +341,22 @@ fun solve (numVariables, clLiterals) =
         (hd (sub(clLiterals, n)))::(findUnitClauses (n + 1))
       else
         findUnitClauses (n + 1)
+
+    fun findPureLiteral n =
+      if n >= numVariables + 1 then
+        []
+      else if (List.length (sub(varClT,n))) > 0 andalso (List.length (sub(varClF,n))) <= 0 then
+        n::(findPureLiteral (n + 1))
+      else if (List.length (sub(varClF,n))) > 0 andalso (List.length (sub(varClT,n))) <= 0 then
+        ~n::(findPureLiteral (n + 1))
+      else
+        findPureLiteral (n + 1)
         
-		val unitClauses = findUnitClauses 0
+		val assignedLiterals = (findUnitClauses 0)@(findPureLiteral 1)
     (*val _ = print "result of findUnitClauses: " 
     val _ = Print.printIntList (unitClauses)*)
 		(* unitClauses ���Ф��ƿ�����Ԥ�? *)
-		val conflicts = deduce unitClauses 0
+		val conflicts = deduce assignedLiterals 0
 	    in
 		null conflicts
 	    end
