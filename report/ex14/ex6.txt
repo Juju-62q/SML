@@ -1,31 +1,82 @@
-5.1 作成課題
+6.1 作成課題
 
 [プログラム]
 
+icec49.ice.nuie.nagoya-u.ac.jp
+
+    fun findPureLiteral n =
+      if n >= numVariables + 1 then
+        []
+      else if (List.length (sub(varClT,n))) > 0 andalso (List.length (sub(varClF,n))) <= 0 then
+        n::(findPureLiteral (n + 1))
+      else if (List.length (sub(varClF,n))) > 0 andalso (List.length (sub(varClT,n))) <= 0 then
+        ~n::(findPureLiteral (n + 1))
+      else
+        findPureLiteral (n + 1)
+        
+    val assignedLiterals = (findUnitClauses 0)@(findPureLiteral 1)
+    (*val _ = print "result of findUnitClauses: " 
+    val _ = Print.printIntList (unitClauses)*)
+    val conflicts = deduce assignedLiterals 0
+
 [実行結果]
 
+改良前
+
+- Nplsat.nplsat ("", ["test/test6_2.cnf", "step5_6_2"]);
+Decisions: 4
+Conflicts: 2
+Implications: 6
+SATISFIABLE
+Computation time is 2msec.
+val it = 0 : OS.Process.status
+- Nplsat.nplsat ("", ["test/test6_2_2.cnf", "step5_6_2_2"]);
+Decisions: 9
+Conflicts: 10
+Implications: 19
+UNSATISFIABLE
+Computation time is 0msec.
+val it = 0 : OS.Process.status
+- Nplsat.nplsat ("", ["test/test6_2_3.cnf", "step5_6_2_3"]);
+Decisions: 6
+Conflicts: 0
+Implications: 5
+SATISFIABLE
+Computation time is 1msec.
+val it = 0 : OS.Process.status
+
+Nplsat.nplsat ("", ["test/test6_3.cnf"]);
+Decisions: 46944897
+Conflicts: 46944248
+Implications: 93889166
+SATISFIABLE
+Computation time is 98945msec.
+val it = 0 : OS.Process.status
+
+改良後
 
 val it = true : bool
-- Nplsat.nplsat ("", ["test/test6_2.cnf"]);
+- Nplsat.nplsat ("", ["test/test6_2.cnf", "step6_6_2"]);
 Decisions: 2
 Conflicts: 1
 Implications: 5
 SATISFIABLE
 Computation time is 1msec.
 val it = 0 : OS.Process.status
-- Nplsat.nplsat ("", ["test/test6_2_2.cnf"]);
+- Nplsat.nplsat ("", ["test/test6_2_2.cnf", "step6_6_2_2"]);
 Decisions: 2
 Conflicts: 3
 Implications: 7
 UNSATISFIABLE
 Computation time is 1msec.
 val it = 0 : OS.Process.status
-- Nplsat.nplsat ("", ["test/test6_2_3.cnf"]);
+- Nplsat.nplsat ("", ["test/test6_2_3.cnf", "step6_6_2_3"]);
 Decisions: 4
 Conflicts: 0
 Implications: 5
 SATISFIABLE
 Computation time is 0msec.
+
 val it = 0 : OS.Process.status
 - Nplsat.nplsat ("", ["test/test6_3.cnf"]);
 Decisions: 4849381
@@ -35,14 +86,37 @@ SATISFIABLE
 Computation time is 10189msec.
 val it = 0 : OS.Process.status
 
-
-
-
 [考察]
+純リテラルを事前に割り当てる方法で高速化を図った。
+プログラムでは各リテラルに対して正で利用されており、負で利用されていない場合に命題変数IDの値をリストに追加し、次の命題変数IDに対して処理をしている。
+また、負で利用されており、正で利用されていない場合に命題変数IDの負の値をリストに追加し、次の命題変数IDに対して処理をしている。
+以上に当てはまらなかった場合には次の命題変数IDに対して処理をしている。
 
-4.2 実行課題
+得た出力ファイルにdiffコマンドをかけて改良前と改良後を比較したところ、test6_2_3.cnfに関して違いが見られた。
+
+diff step5_6_2_3 step6_6_2_3
+< -1 -2 -3 -4 -5 0
+---
+> -1 2 -3 -4 -5 0
+
+これは2の割り当てを事前に行っているために生じる変化である。
+また、実行結果から総じて変数割り当て回数が減少していることも見て取れる。
+
+実行時間の変化を確認するためtest6_3.cnfを改良前後で実行したところ実行時間が1/10程度になった。
+このことから今回の開発において速度の向上が見られたと確認できる。
+
+6.2 作成課題
 
 [実行結果]
 
-[考考察]
-実験4-2でも実行したsudoku11548では修正前は40秒かかっていたことに対し、85msに減少していることが確認できた。
+- SMLofNJ.exportFn ("nplsat",Nplsat.nplsat);
+sml @SMLload=nplsat.x86-linux test/sudoku5374.cnf ../sudoku5374.sat
+Decisions: 1152788
+Conflicts: 1152139
+Implications: 2304948
+SATISFIABLE
+Computation time is 2516msec.
+
+[考察]
+作成された実行するためのファイルを端末から実行したところ正常に探索を行いファイルも作成されることが確認できた。
+したがって本課題で作成したファイルで正常にプログラムが実行できたと分かる。
